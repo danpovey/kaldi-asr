@@ -1,0 +1,8 @@
+This directory is used to store the Apache config file "kaldi-asr"; we made a soft link like this:
+cd /etc/apache2/sites-available
+ln -s /var/www/kaldi-asr/config/kaldi-asr .
+This is done so that we can put it in the same git repository as the html and php of the site's 
+contents.
+(note: for reasons of size, we can't do the same for the directory "/var/www/kaldi-asr/resources/" 
+here the actual resources we export are kept.)
+
