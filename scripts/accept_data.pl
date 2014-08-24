@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 
+# function myssh { foreach
+
 use Getopt::Long;
 binmode(STDIN);
 
-#my $submission_root = "/mnt/kaldi_asr_data/submitted";
+my $submission_root = "/mnt/kaldi_asr_data/submitted";
 my $submission_root = "/Users/danielpovey/temp_data";
 my $block_size = 65536;   # affects memory usage, and how many hash marks are printed.
 
@@ -13,9 +15,11 @@ my $name;
 my $revision;
 my $root;
 
-$usage_message = "$0: usage: ssh uploads\@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name <your_name> --root <archive-root> < (your data)\n" .
+$usage_message = "$0: usage: ssh uploads\@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name \\\"<your name>\\\" --note \\\"<your note>\\\" --root <archive-root> < (your data)\n" .
    "  e.g.: cd egs/wsj\n" .
-   "  tar cvz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name Daniel_Povey --root egs/wsj\n";
+   "  tar cvz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name \\\"Daniel_Povey\\\" --root egs/wsj  --note \\\"Building standard parts of WSJ script\\\"\n" .
+  " note, the quotes do need to be escaped; it relates to the way ssh works.\n";
+
 
 if (@ARGV == 0) {
   print STDERR $usage_message;
@@ -35,7 +39,7 @@ if (@ARGV > 0) {
 
 sub check_opt_generic {
   ($opt_name, $opt) = @_;
-  if ($opt =~ /^\s+$/) { # The option is either empty or all spaces.
+  if ($opt =~ /^\s*$/) { # The option is either empty or all spaces.
     print STDERR "The option --$opt_name is required\n";
     exit(1);
   }
@@ -65,8 +69,10 @@ if (system($cmd) != 0) {
   print STDERR "[OK]\n";
 }
 
-if ($name !~ s/_/ /) {
-  print STDERR "$0: expected your name to have underscores in it (these will be converted to spaces); got '$name' as --name option.\n";
+@name_parts = split(" ", $name);
+$num_parts = @name_parts;
+if ($num_parts < 2 || $num_parts > 3) {
+  print STDERR "$0: expected your name to have two or three parts separated by spaces; got '$name' as --name option.\n";
   exit(1);
 }
 
@@ -243,4 +249,3 @@ if (system("mv $tempdir $submission_root/$build") != 0) {
 
 print "$0: succeeded uploading build number $build.  Please ask dpovey\@gmail.com to rebuild the site.\n";
 exit(0);
-
