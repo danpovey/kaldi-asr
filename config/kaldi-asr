@@ -5,11 +5,13 @@
 
 	DocumentRoot /var/www/kaldi-asr
 	<Directory />
-		Options FollowSymLinks Indexes
+		Options -Indexes
+                #was: Options FollowSymLinks Indexes
 		AllowOverride All
 	</Directory>
 	<Directory /var/www/kaldi-asr>
 		Options Indexes FollowSymLinks MultiViews
+                IndexHeadInsert '<link rel="icon" type="image/png" href="/kaldi_ico.png"/>'
 		AllowOverride All
 		Order allow,deny
 		allow from all
