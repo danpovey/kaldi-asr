@@ -1,0 +1,157 @@
+
+From top-level:
+
+  # note: if we give pathnames relative to /, that don't start with /mnt, then
+  # bear in mind that / really means /var/www/kaldi-asr/ which is our
+  # DocumentRoot.
+
+  # Our /data is a soft link to the actual disk, /mnt/kaldi-asr/
+  # /downloads is a soft link to something like /data/compile/321/; we replace
+  # the link "downloads" whenever we're done recompiling the index.  The 
+  # compilation number isn't necessarily the same as the  "build number";
+  # the "build number" (which appears publicly) corresponds to the upload that was made to kaldi-asr.org;
+  # the compilation number is private.
+
+  # /data/compile/<compile-number> are directory trees containing index.html's 
+  # and various soft links to different versions of different files.
+  # It contains e.g. 
+  #   /data/compile/321/all/egs/wsj/s5
+  #   /data/compile/321/tree/trunk/egs/wsj/s5
+  #   /data/compile/321/tree/sandbox/online/egs/wsj/s5
+  #
+  #
+  # The compile directories can contain pointers to things in /data/tree/
+  #
+  # /data/build/321/versions/50 -> /data/processed/42
+  # /data/build/321/versions/51 -> /data/processed/43
+  #
+  # The pointer indexes in /data/builds/321/versions/ are indexed by version number,
+  # and the things in /data/processed/ are indexed by upload number (each one 
+  # maps to a version number).
+  # 
+  # 
+  # A version is basically a .tgz file consisting of some part of the Kaldi directory
+  # tree, together with some metadata.  It's possible to revise versions by re-uploading
+  # them (useful mainly in case you find errors).
+  # Suppose you have some stuff in egs/wsj/s5.
+  # You could do some cleanup and then do this:
+  # tar -cvzf upload.tar.gz s5/data s5/exp
+  # Now, 'upload' is relative to the directory egs/wsj, and let's suppose it's in branch
+  # "trunk".  So for metadata we have as follows:
+  #
+  #
+  # build=129   # the build/upload number gets assigned in order based on time of arrival.
+  #             # we always assign the most recent unused number.
+  # branch=trunk   [could also be e.g. sandbox/online]
+  # kaldi_revision=4521
+  # root=egs/wsj
+  # committer="Daniel Povey"  [note, this must be ASCII, no special characters please.]
+  # note=
+  # time=1408583985 is the UNIX time corresponding to the current commit
+  # (and of course the user-provided archive itself, which we'll call upload.tar.gz)
+  #
+  # we'll submit this with something like the following (for a new version):
+  # submit_kaldi_build.pl  --branch=trunk --root=egs/wsj --committer="Daniel Povey" --note="Build of the standard steps in egs/wsj/s5" foo.tar.gz
+  # Here, the 'build', 'version' and 'time' will be worked out automatically on the server.
+  # To revise an existing version, we'll do like this:
+  #
+  #  submit_kaldi_build.pl  --version=50 --branch=trunk --root=egs/wsj --kaldi-revision=4521 --committer="Daniel Povey" --note="Build of the standard steps in egs/wsj/s5" foo.tar.gz
+  # 
+  #
+  # Here, the 'build' and 'time' are worked out automatically, but the
+  # 'version' is as specified.  If the username does not correspond to the one which
+  # the version originally had, it won't let you commit.
+  # 
+  #  
+
+
+  # In /data/versions/1, /data/versions/2, we have the archives 
+  # commits/2, and so on, we have links to 
+  # /data/versions/ uploads/1, /data/uploads/2, and so on.
+
+  
+
+
+url:  kaldi-asr.org/downloads/all/
+note: /downloads is a link to /data/compile/<current version> e.g. /data/compile/321
+file:  /data/compile/321/all/
+
+ Index of / 
+
+ Filter by:  [trunk]   [complete]   [sandbox/online]    [sandbox/karel]
+
+ Contents: 
+   egs/                [b1] [b2] [b3] [b4] ...
+   utils [soft link]
+   run.sh              [b2] [b10]
+
+
+url: kaldi-asr.org/downloads/tree/trunk/
+file relative to /var/www/kaldi-asr:  data/builds/321/tree/trunk/index.html
+
+From a branch:
+  /downloads/trunk
+
+  Index of / in trunk  [see all branches]
+             ... [b1302] [b1303] 
+
+  Contents:
+
+   egs/                [b1]...  [b1302] [b1303]  
+   run.sh              [b1] [b1202]
+   foobar -> steps/u.. 
+
+url:  kaldi-asr.org/downloads/tree/trunk/
+file: /data/build/321/tree/trunk/index.html
+
+
+
+From a build:
+
+The actual build data goes in
+/data/build/321/
+
+url:  kaldi-asr.org/downloads/build/4/trunk/
+file: /data/build/321/trunk
+file: /data/build_indexes/321/trunk/index.html
+
+  Build 2   [see all builds]
+            [revised/submitted] 01/14/2014 by Daniel Povey.   
+            Built with svn revision number 4267 of Kaldi
+            Note text goes here
+
+  Index of / in trunk, version 2 [see all versions]
+
+# href is to /downloads/archives/4/trunk/
+  [download archive of this directory]  uncompressed size is XXGB.
+OR
+  [this directory is too large to download as an archive] uncompressed size is XXGB.
+
+  Contents:   (r is revision, c is kaldi-asr commit number)
+
+ # first list subdirectories, then files, then links (long names and any links can be elided with ... and use mouseover text.)
+ 
+   File                       Size
+   egs/                       341M
+   run.sh                       2K
+   path.sh                     324
+   foobar -> steps/ufoob..       -
+
+
+
+http://httpd.apache.org/docs/2.2/rewrite/flags.html
+
+
+-----------------
+
+Things to do:
+  Script that checks and uploads a data directory, and compiles its metadata.
+  For now, this will just queue it somewhere on the host.
+  We'll have a user 'upload' (passwd: kaldi) that just runs this
+
+  upload_data.pl [options] <directory>
+
+
+  ssh uploads@www.kaldi-asr.org accept_data.pl [options]  <data
+
+
