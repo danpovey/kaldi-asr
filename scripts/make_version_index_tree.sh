@@ -12,7 +12,7 @@ if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "in $data_root/build_index/<build-number>.temp that has the same structure as the directory"
   echo "tree in $data_root/build/<build-number>.temp, but without the files- only a file named size_kb"
   echo "that contains (as text) the integer number of kilobytes in that directory (inclusive)."
-  echo "This will be used while building the indexes (see make_indexes.sh)."
+  echo "This will be used while building the indexes (see make_version_indexes.sh)."
   exit 1;
 fi
 

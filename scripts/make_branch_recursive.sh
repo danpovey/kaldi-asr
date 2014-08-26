@@ -13,7 +13,7 @@ if [ $# -le 2 ]; then
 fi
 
 branch=$1
-relative_path=$2 # will be the empty string at the top level.
+relative_pathname=$2 # will be the empty string at the top level.
 shift 2
 
 build_indexes=$*
@@ -21,7 +21,7 @@ build_indexes=$*
 # filter the inputs to include only those that are directories (and not soft links).
 filtered_indexes=()
 for b in $build_indexes; do
-  dir=$data_root/build/$b/$branch/$relative_path
+  dir=$data_root/build/$b/$branch/$relative_pathname
   dir=$(echo $dir | sed s:/$::g) # remove trailing slashes.
   if ! [ -S $dir ] && [ -d $dir ]; then  # x is not a soft link, and is a directory.
     filtered_indexes+=("$b");
@@ -34,7 +34,7 @@ if [ ${#filtered_indexes} -eq 0 ]; then
   exit 1;
 fi
 
-outdir=$data_root/tree.temp/$branch/$relative_path
+outdir=$data_root/tree.temp/$branch/$relative_pathname
 
 if ! mkdir -p $outdir; then
   log_message "error creating directory $outdir"
@@ -42,10 +42,10 @@ if ! mkdir -p $outdir; then
 fi
 
 
-# make the index for this directory.  be careful; $relative_path may be the empty string.
-if ! php $script_root/make_branch_index.php $data_root $branch "$relative_path" "${filtered_indexes[@]}" > $outdir/index.html; then
+# make the index for this directory.  be careful; $relative_pathname may be the empty string.
+if ! php $script_root/make_branch_index.php $data_root $branch "$relative_pathname" "${filtered_indexes[@]}" > $outdir/index.html; then
   log_message "error creating index for $outdir; php command was:"
-  log_message php make_branch_index.php $data_root $branch \"$relative_path\" "${filtered_indexes[@]}"
+  log_message php make_branch_index.php $data_root $branch \"$relative_pathname\" "${filtered_indexes[@]}"
   exit 1;
 fi
 
@@ -56,7 +56,7 @@ fi
 # of at least one of @filtered_list.
 temp=$(mktemp /tmp/tmp.XXXXXX)
 for b in ${filtered_indexes[@]}; do
-  dir=$data_root/build/$b/$branch/$relative_path
+  dir=$data_root/build/$b/$branch/$relative_pathname
   for x in $(ls -a $dir); do # -a option includes things that start with ".",
                              # which we also compile indexes for, although many
                              # such things will already have been filtered out
@@ -68,9 +68,9 @@ for b in ${filtered_indexes[@]}; do
 done | uniq >$temp || exit 1;
 
 for subdir in $(cat $temp); do
-  new_path=$(echo $relative_path/$subdir | sed s:^/::g) # remove leading slash.
-  if ! make_branch_recursive.sh $branch $new_path ${filtered_indexes[@]}; then
-    log_message "recursive call failed: make_branch_recursive.sh $branch $new_path ${filtered_indexes[@]}"
+  new_pathname=$(echo $relative_pathname/$subdir | sed s:^/::g) # remove leading slash.
+  if ! make_branch_recursive.sh $branch $new_pathname ${filtered_indexes[@]}; then
+    log_message "recursive call failed: make_branch_recursive.sh $branch $new_pathname ${filtered_indexes[@]}"
     rm $temp
     exit 1;
   fi

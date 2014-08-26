@@ -8,7 +8,7 @@ fi
 if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "Usage: $0 <build-number>"
   echo "e.g.: $0 15"
-  echo "This script, which should be called after make_index_tree.sh, will create index.html files"
+  echo "This script, which should be called after make_version_index_tree.sh, will create index.html files"
   echo "in subdirectories of $data_root/build_index/<build-number>.temp, and when done,"
   echo "will move the directory tree to $data_root/build_index/<build-number> after removing"
   echo "any existing directory with that name.  This script also examines the contents of"
@@ -48,9 +48,9 @@ for x in $(find $dir -type d); do
     exit 1;
   fi
   x_relative=$(echo $x | sed s:^$dir:: | sed s:^/::);
-  echo php make_index.php $data_root $build $x_relative
+  echo php make_version_index.php $data_root $build $x_relative
   # note, $x_relative may be the empty string; this is valid.
-  if ! php make_index.php $data_root $build "$x_relative" > $x/index.html; then
+  if ! php make_version_index.php $data_root $build "$x_relative" > $x/index.html; then
     log_message "Error making index.html in directory $x"
     exit 1;
   fi
