@@ -1,7 +1,14 @@
 #!/bin/bash
 
-#data_root=/mnt/kaldi-asr-data
-data_root=/Users/danielpovey/kaldi-asr/data
+function log_message {
+  echo "$0: $*"
+  echo "$0: $*" | logger -t kaldi-asr
+}
+
+if ! . kaldi_asr_vars.sh; then
+  log_message "Failed to source kaldi_asr_vars.sh"
+  exit 1;
+fi
 
 if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "Usage: $0 <build-number>"
@@ -13,14 +20,10 @@ fi
 
 build=$1
 
-function log_message {
-  echo "$0: $*"
-  echo "$0: $*" | logger -t kaldi-asr
-}
-
 
 # First extract the data into a temporary directory.
 
+submitted=$data_root/submitted/$build
 tmpdir=$data_root/build/$build.temp
 destdir=$data_root/build/$build
 
@@ -34,24 +37,23 @@ if ! mkdir $tmpdir; then
   exit 1;
 fi
 
-sub=$data_root/submitted/$build/
 
-if [ ! -f $sub/metadata ]; then
-  log_message "No such file $sub/metadata"
+if [ ! -f $submitted/metadata ]; then
+  log_message "No such file $submitted/metadata"
   exit 1;
 fi
 
-if [ ! -f $sub/archive.tar.gz ]; then
-  log_message "No such file $sub/archive.tar.gz"
+if [ ! -f $submitted/archive.tar.gz ]; then
+  log_message "No such file $submitted/archive.tar.gz"
   exit 1;
 fi
 
 
 # source a command like 'branch=trunk', so we set the variable.
-eval `grep '^branch=' $sub/metadata`;
+eval `grep '^branch=' $submitted/metadata`;
 
 # source a command like 'root=egs/wsj', so we set the variable.
-eval `grep '^root=' $sub/metadata`;
+eval `grep '^root=' $submitted/metadata`;
 
 extraction_root=$tmpdir/$branch/$root/
 if ! mkdir -p $extraction_root; then
@@ -59,7 +61,23 @@ if ! mkdir -p $extraction_root; then
   exit 1;
 fi
 
-if ! tar -C $extraction_root -xf $sub/archive.tar.gz; then
+excludes=()  # options to tar that direct various things to be excluded from the extraction.
+excludes+=('--exclude=._*')  # files with metadata that get created on a Mac.
+excludes+=('--exclude=*~') # emacs backup
+excludes+=('--exclude=#*#') # emacs autosave
+excludes+=('--exclude=.DS_Store') # something from Macs.
+excludes+=('--exclude=.backup') # Kaldi creates these when doing various operations in data/.
+excludes+=('--exclude=.trash') # Sometimes I use this directory name when I want to get rid of stuff.
+excludes+=('--exclude=.svn') # In most cases we won't want to store .svn directories in these uploads.
+# The things excluded by the next pattern are subdirectories of things like
+# data/train/, that get created by the script split_data_dir.sh.  They are
+# derived data, so I don't want to keep them around.  I'm not 100% sure whether
+# deleting them is a good idea.
+excludes+=('--exclude=split[0-9]' '--exclude=split[0-9][0-9]' '--exclude=split[0-9][0-9][0-9]') 
+excludes+=('--exclude=* *') # exclude filenames with spaces in them.
+
+# We may at some later point have to mess with these exclusion options.
+if ! tar -v -C $extraction_root -xf $submitted/archive.tar.gz "${excludes[@]}"; then
   log_message "failed to extract data."
   exit 1;
 fi
@@ -77,6 +95,14 @@ fi
 if ! mv $tmpdir $destdir; then
   log_message "error moving directory $tmpdir to $destdir"
   exit 1;
+fi
+
+if [ -s $submitted/QUEUED ]; then
+  log_message "removing contents of file $submitted/QUEUED";
+  if ! echo -n > $submitted/QUEUED; then
+    log_message "Error removing contents of file $submitted/QUEUED";
+    exit 1;
+  fi
 fi
 
 exit 0;

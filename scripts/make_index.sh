@@ -1,7 +1,14 @@
 #!/bin/bash
 
-#data_root=/mnt/kaldi-asr-data
-data_root=/Users/danielpovey/kaldi-asr/data
+function log_message {
+  echo "$0: $*"
+  echo "$0: $*" | logger -t kaldi-asr
+}
+
+if ! . kaldi_asr_vars.sh; then
+  log_message "Failed to source kaldi_asr_vars.sh"
+  exit 1;
+fi
 
 if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "Usage: $0 <build-number>"
@@ -16,11 +23,6 @@ fi
 
 build=$1
 
-function log_message {
-  echo "$0: $*"
-  echo "$0: $*" | logger -t kaldi-asr
-}
-
 
 srcdir=$data_root/build/$build
 metadata=$data_root/submitted/$build/metadata
@@ -31,6 +33,12 @@ for f in $dir/size_kb $metadata; do
 done
 
 for x in $(find $dir -type d); do
+  if [ ! -d $x ]; then # could occur, for example, if directory names have spaces in them.
+                       # this won't be a fatal error.
+    log_message "Skipping directory $dir as it does not seem to exist (perhaps dirnames with spaces?)"
+    continue
+  fi
+
   x_src=$(echo $x | sed s:^$dir:$srcdir:);
   if [ -z "$x_src" ] || [ "$x_src" == "$x" ]; then
     log_message "Error getting source for directory '$x', got '$x_src'"

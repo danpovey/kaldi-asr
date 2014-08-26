@@ -87,7 +87,6 @@ $file_name_to_size_bytes = array(); // Map from name of file in this directory t
                                     // size in bytes.
 $link_name_to_dest = array();  // Maps from soft-link name to soft-link destination.
 
-$entries = scandir($srcdir); // returns array of entries.
 
 if (!($handle = opendir($srcdir))) {
    syslog(LOG_ERR, "make_index.php: could not open source directory $srcdir for reading.");
@@ -147,7 +146,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
         <div id="mainContent">
 
         <h3>
- <?php print "Index of /$directory/ in build $build; <a href='$all_url' [see all builds] </a>"; ?>
+          <?php print "Index of /$directory/ in build $build; <a href='$all_url'> [see all builds] </a>"; ?>
         </h3>
 
         <div class="boxed">

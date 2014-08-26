@@ -113,7 +113,7 @@ The actual build data goes in
 
 url:  kaldi-asr.org/downloads/build/4/trunk/
 file: /data/build/321/trunk
-file: /data/build_indexes/321/trunk/index.html
+file: /data/build_index/321/trunk/index.html
 
   Build 2   [see all builds]
             [revised/submitted] 01/14/2014 by Daniel Povey.   
@@ -149,9 +149,9 @@ Things to do:
   For now, this will just queue it somewhere on the host.
   We'll have a user 'upload' (passwd: kaldi) that just runs this
 
-  upload_data.pl [options] <directory>
 
+process_version.sh
+ First,  
 
-  ssh uploads@www.kaldi-asr.org accept_data.pl [options]  <data
 
 
