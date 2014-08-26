@@ -51,15 +51,15 @@ mkdir -p $temp_output
 # doing it this way is that as we get deeper into the tree, we have to check
 # fewer and fewer directories.
 if ! make_branch_recursive.sh $branch $temp_output $data_root/build/[0-9]*/$branch; then
-  log_message "$0: error calling make_branch_recursive.sh, command was: make_branch_recursive.sh $branch $temp_output $data_root/build/[0-9]*/$branch"
+  log_message "error calling make_branch_recursive.sh, command was: make_branch_recursive.sh $branch $temp_output $data_root/build/[0-9]*/$branch"
   exit 1;
 fi
 
 if [ -d $final_output ]; then
-  log_message "$0: moving old tree location $final_output to $final_output.delete"
+  log_message "moving old tree location $final_output to $final_output.delete"
   rm -rf $final_output.delete  # just in case it already exists.
   if ! mv $final_output $final_output.delete; then
-    log_message "$0: error moving old tree location $final_output"
+    log_message "error moving old tree location $final_output"
     exit 1;
   fi
 fi
@@ -67,7 +67,7 @@ fi
 mkdir -p $(basename $final_output) # make sure that the directory one up from $final_output exists,
                                    # e.g. the directory $data_root/tree/sandbox
 if ! mv $temp_output $final_output || ! [ -f $final_output/index.html ]; then
-  log_message "$0: error moving temporary output to final location $final_output"  
+  log_message "error moving temporary output to final location $final_output"  
   exit 1;
 fi
 

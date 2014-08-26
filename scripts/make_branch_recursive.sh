@@ -53,7 +53,7 @@ fi
 
 
 # make the index for this directory.
-if ! php make_branch_index.php $data_root $branch $outdir "${filtered_list[@]}" > $outdir/index.html; then
+if ! php $script_root/make_branch_index.php $data_root $branch $outdir "${filtered_list[@]}" > $outdir/index.html; then
   log_message "error creating index for $outdir; php command was:"
   log_message php make_branch_index.php $data_root $branch $outdir "${filtered_list[@]}"
   exit 1;

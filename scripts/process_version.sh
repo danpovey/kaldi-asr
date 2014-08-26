@@ -23,6 +23,6 @@ set -e
 extract_build.sh $1
 make_index_tree.sh $1
 make_index.sh $1
-log_message "$0: successfully processed build $1"
+log_message "successfully processed build $1"
 
 exit 0;
