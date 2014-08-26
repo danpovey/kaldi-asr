@@ -1,50 +1,40 @@
 #!/bin/bash
 
-function log_message {
-  echo "$0: $*"
-  echo "$0: $*" | logger -t kaldi-asr
-}
-
 if ! . kaldi_asr_vars.sh; then
-  log_message "Failed to source kaldi_asr_vars.sh"
+  echo "Failed to source kaldi_asr_vars.sh" 1>&2
   exit 1;
 fi
 
 if [ $# -le 2 ]; then
-  echo "Usage: $0 <branch-name> <directory-for-output> <list-of-corresponding-build-directories>"
-  echo "e.g.: $0 trunk $data_root/tree.temp/trunk/egs/wsj $data_root/build/15/trunk/egs/wsj $data_root/build/19/trunk/egs/wsj $data_root/build/27/trunk/egs/wsj"
-  echo "These must all correspond to different version-numbers of the same pathname,"
-  echo "and at least one must be a directory and not a soft link (typically, all will be directories)."
-  echo "None of the arguments may contain spaces."
-  echo "The directory corresponding to the first argument does not need to exist."
+  echo "Usage: $0 <branch-name> <relative-pathname> <list-of-build-indexes>"
+  echo "e.g.: $0 trunk egs/wsj 15 19 27"
   echo "This script is called recursively; the top-level call is in make_branch.sh."
   exit 1;
 fi
 
 branch=$1
-outdir=$2
+relative_path=$2 # will be the empty string at the top level.
 shift 2
 
-n=$(echo $outdir | wc -w)
-if ! [ $n -eq 1 ]; then
-  log_message "Skipping directory $outdir because it seems to have spaces in it: $n"
-  exit 0;  # This is not treated as an error; we want compilation to succeed anyway.
-fi
+build_indexes=$*
 
 # filter the inputs to include only those that are directories (and not soft links).
-filtered_list=()
-for x in $*; do
-  if ! [ -S $x ] && [ -d $x ]; then  # x is not a soft link, and is a directory.
-    filtered_list+=("$x");
-  else
-    log_message "Warning: ignoring $x because it is not a directory, or is a soft link."
+filtered_indexes=()
+for b in $build_indexes; do
+  dir=$data_root/build/$b/$branch/$relative_path
+  dir=$(echo $dir | sed s:/$::g) # remove trailing slashes.
+  if ! [ -S $dir ] && [ -d $dir ]; then  # x is not a soft link, and is a directory.
+    filtered_indexes+=("$b");
   fi
 done
 
-if [ ${#filtered_list} -eq 0 ]; then
-  log_message "error: none of the input arguments to $0 were directories (and not soft links): $outdir $*"
+if [ ${#filtered_indexes} -eq 0 ]; then
+  # this should not happen
+  log_message "error: filtered out all input indexes."
   exit 1;
 fi
+
+outdir=$data_root/tree.temp/$branch/$relative_path
 
 if ! mkdir -p $outdir; then
   log_message "error creating directory $outdir"
@@ -52,10 +42,10 @@ if ! mkdir -p $outdir; then
 fi
 
 
-# make the index for this directory.
-if ! php $script_root/make_branch_index.php $data_root $branch $outdir "${filtered_list[@]}" > $outdir/index.html; then
+# make the index for this directory.  be careful; $relative_path may be the empty string.
+if ! php $script_root/make_branch_index.php $data_root $branch "$relative_path" "${filtered_indexes[@]}" > $outdir/index.html; then
   log_message "error creating index for $outdir; php command was:"
-  log_message php make_branch_index.php $data_root $branch $outdir "${filtered_list[@]}"
+  log_message php make_branch_index.php $data_root $branch \"$relative_path\" "${filtered_indexes[@]}"
   exit 1;
 fi
 
@@ -65,7 +55,8 @@ fi
 # and 'uniq'ing them to get the names of all directories that are subdirectories
 # of at least one of @filtered_list.
 temp=$(mktemp /tmp/tmp.XXXXXX)
-for dir in ${filtered_list[*]}; do
+for b in ${filtered_indexes[@]}; do
+  dir=$data_root/build/$b/$branch/$relative_path
   for x in $(ls -a $dir); do # -a option includes things that start with ".",
                              # which we also compile indexes for, although many
                              # such things will already have been filtered out
@@ -77,20 +68,9 @@ for dir in ${filtered_list[*]}; do
 done | uniq >$temp || exit 1;
 
 for subdir in $(cat $temp); do
-  args=("$branch" "$outdir/$subdir")
-  for dir in ${filtered_list[*]}; do
-    # add to @args all things of the form $dir/$subdir that
-    # exist, and are directories and not soft links.
-    if [ -d $dir/$subdir ] && [ ! -S $dir/$subdir ]; then 
-      args+=("$dir/$subdir");
-    fi
-  done
-  if [ ${#args} -lt 4 ]; then
-    log_message "failed building branch index: none of ${filtered_list[*]} contains a subdirectory $subdir"
-    exit 1;
-  fi
-  if ! make_branch_recursive.sh "${args[@]}"; then
-    log_message "recursive call failed: make_branch_recursive.sh ${args[*]}"
+  new_path=$(echo $relative_path/$subdir | sed s:^/::g) # remove leading slash.
+  if ! make_branch_recursive.sh $branch $new_path ${filtered_indexes[@]}; then
+    log_message "recursive call failed: make_branch_recursive.sh $branch $new_path ${filtered_indexes[@]}"
     rm $temp
     exit 1;
   fi

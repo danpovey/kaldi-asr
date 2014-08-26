@@ -1,12 +1,7 @@
 #!/bin/bash
 
-function log_message {
-  echo "$0: $*"
-  echo "$0: $*" | logger -t kaldi-asr
-}
-
 if ! . kaldi_asr_vars.sh; then
-  log_message "Failed to source kaldi_asr_vars.sh"
+  echo "Failed to source kaldi_asr_vars.sh" 1>&2
   exit 1;
 fi
 
@@ -50,8 +45,14 @@ mkdir -p $temp_output
 # corresponding to a directory we want to build the index for.  The reason for
 # doing it this way is that as we get deeper into the tree, we have to check
 # fewer and fewer directories.
-if ! make_branch_recursive.sh $branch $temp_output $data_root/build/[0-9]*/$branch; then
-  log_message "error calling make_branch_recursive.sh, command was: make_branch_recursive.sh $branch $temp_output $data_root/build/[0-9]*/$branch"
+
+if ! index_list=$(get_index_list.sh); then
+  log_message "failure getting index list."
+  exit 1;
+fi
+
+if ! make_branch_recursive.sh $branch '' $index_list; then
+  log_message "error calling make_branch_recursive.sh, command was: make_branch_recursive.sh $branch \"\" $index_list"
   exit 1;
 fi
 

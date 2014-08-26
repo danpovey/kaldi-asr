@@ -1,15 +1,9 @@
 #!/bin/bash
 
-function log_message {
-  echo "$0: $*"
-  echo "$0: $*" | logger -t kaldi-asr
-}
-
 if ! . kaldi_asr_vars.sh; then
-  log_message "Failed to source kaldi_asr_vars.sh"
+  echo "Failed to source kaldi_asr_vars.sh" 1>&2
   exit 1;
 fi
-
 
 if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "Usage: $0 <version-number>"
