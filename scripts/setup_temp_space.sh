@@ -7,13 +7,16 @@ fi
 
 set -e
 cd /var/www/kaldi-asr
-# 3 gigabyte file.
-dd if=/dev/zero of=loopback_file bs=1024 count=$[1024*1024*3]
-chmod 600 loopback_file
+if [ ! -f loopback_file ]; then
+  # 3 gigabyte file.
+  dd if=/dev/zero of=loopback_file bs=1024 count=$[1024*1024*3]
+  chmod 600 loopback_file
+fi
 
-losetup /dev/loop1 /var/www/kaldi-asr/loopback_file
-
-mkfs -t ext3 /dev/loop1
+if ! losetup /dev/loop1; then  # not previously set up.
+  losetup /dev/loop1 /var/www/kaldi-asr/loopback_file
+  mkfs -t ext3 /dev/loop1
+fi
 
 mkdir -p /mnt/kaldi-asr-loopback
 rm tmp.small
@@ -29,4 +32,11 @@ if ! [ -e /mnt/kaldi-asr-loopback/lost+found ]; then
   exit 1;
 fi
 
-chmod a+rwx tmp.small/
+mkdir -p /mnt/kaldi-asr/tmp
+rm tmp.large
+ln -s /mnt/kaldi-asr/tmp tmp.large
+
+for x in tmp.small tmp.large; do
+  chown -R www-data:www-data $x
+  chmod 600 $x
+done

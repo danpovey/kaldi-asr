@@ -3,8 +3,8 @@
 use Getopt::Long;
 binmode(STDIN);
 
-my $submission_root = "/mnt/kaldi-asr-data/submitted";
-# my $submission_root = "/Users/danielpovey/temp_data";
+# my $submission_root = "/mnt/kaldi-asr-data/submitted";
+my $submission_root = "/Users/danielpovey/temp_data";
 
 my $block_size = 65536;   # affects memory usage, and how many hash marks are printed.
 
@@ -14,10 +14,11 @@ my $name;
 my $revision;
 my $root;
 
-$usage_message = "$0: usage: ssh uploads\@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name \\\"<your name>\\\" --note \\\"<your note>\\\" --root <archive-root> < (your data)\n" .
+$usage_message = "$0: usage: ssh uploads\@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name '\"<your name>\"' --note '\"<your note>\"' --root <archive-root> < (your data)\n" .
    "  e.g.: cd egs/wsj\n" .
-   "  tar cz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name \\\"Daniel Povey\\\" --root egs/wsj  --note \\\"Building standard parts of WSJ script\\\"\n" .
-  " note, the quotes do need to be escaped; it relates to the way ssh works.\n";
+   "  tar cz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name '\"Daniel Povey\"' --root egs/wsj  --note '\"Building standard parts of WSJ script\"'\n" .
+  " note, the double quoting is necessary; the outer ones will be interpreted by your shell and the\n" .
+  " inner ones by the shell at kaldi-asr.org.\n";
 
 
 if (@ARGV == 0) {

@@ -1,4 +1,6 @@
 [#]*[#]
 *[~]
-
-
+\.[#]*
+/data
+/downloads
+/data_eg

@@ -44,16 +44,16 @@
  When you are ready to submit, the usage is as follows (and note that ssh will prompt for your password, which
  Dan will give you).
 <pre>
-ssh uploads@kaldi-asr.org accept_data.pl --revision &lt;kaldi-svn-revision&gt; --branch &lt;branch-name&gt; --name \"&lt;your name&gt;\" \
-    --note \"&lt;your note&gt;\" --root &lt;archive-root&gt; &lt; (your data)
+ssh uploads@kaldi-asr.org accept_data.pl --revision &lt;kaldi-svn-revision&gt; --branch &lt;branch-name&gt; --name '"&lt;your name&gt;"' \
+    --note '"&lt;your note&gt;"' --root &lt;archive-root&gt; &lt; (your data)
 </pre>
-and you do need to escape those quotes to avoid them being interpreted by your own shell
-(we want them to be interpreted by the shell on the remote machine, kaldi-asr.org).
+the double quoting is necessary-- the outer quotes are interpreted by your shell, 
+and the inner ones by the shell on the remote machine, kaldi-asr.org.
 A concrete example is as follows:
 <pre>
   cd ~/kaldi-trunk/egs/wsj/s5
   tar cz data exp | ssh uploads@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk \
-     --name \"Daniel Povey\" --root egs/wsj/s5  --note \"Building the standard parts of WSJ script\"
+     --name '"Daniel Povey"' --root egs/wsj/s5  --note '"Building the standard parts of WSJ script"'
 </pre>
  For larger builds it will make sense to clean up your output before submitting,
  e.g. remove intermediate neural net model builds and egs/ directories, lattices (if they are large)
@@ -78,7 +78,7 @@ A concrete example is as follows:
  cd s5.upload
  # &lt;do any cleanup you need to do&gt;
  tar cz data exp | ssh uploads@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk \
-      --name \"Daniel Povey\" --root egs/wsj/s5  --note \"Building the standard parts of WSJ script\"
+      --name '"Daniel Povey"' --root egs/wsj/s5  --note '"Building the standard parts of WSJ script"'
 </pre>
  
 <p>
