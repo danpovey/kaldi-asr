@@ -47,6 +47,8 @@
 ssh uploads@kaldi-asr.org accept_data.pl --revision &lt;kaldi-svn-revision&gt; --branch &lt;branch-name&gt; --name \"&lt;your name&gt;\" \
     --note \"&lt;your note&gt;\" --root &lt;archive-root&gt; &lt; (your data)
 </pre>
+and you do need to escape those quotes to avoid them being interpreted by your own shell
+(we want them to be interpreted by the shell on the remote machine, kaldi-asr.org).
 A concrete example is as follows:
 <pre>
   cd ~/kaldi-trunk/egs/wsj/s5
