@@ -46,6 +46,8 @@ if ($file_contents === false || count($file_contents) != 1
 $size_kb = $file_contents[0];
 
 function try_with_location($temp_disk) {
+  global $size_kb, $build_location, $id;
+
   // $temp_disk will be $doc_root/tmp.small or $doc_root/tmp.large
   // This function will return true if we fulfilled the request for the archive using 
   // this temp location, and otherwise false.
@@ -59,7 +61,7 @@ function try_with_location($temp_disk) {
   }
   // It's plausible that we could fulfil the request using this scratch space, so give
   // it a try.
-  $temp_file = tempnam($temp_disk);
+  $temp_file = tempnam($temp_disk, "tmp");
   if ($temp_file === false) {
     syslog(LOG_ERR, "get_archive.php?id=$id: error creating temporary file in directory $temp_disk");
     return false;
@@ -85,8 +87,8 @@ function try_with_location($temp_disk) {
     return false;
   }
   // It succeeded.
-  if (!unlink($temp_file)) {
-    syslog(LOG_ERR, "error deleting $temp_file");
+  if (!fclose($fptr) || !unlink($temp_file)) {
+    syslog(LOG_ERR, "error closing or deleting $temp_file");
   }
   return true;
 }
