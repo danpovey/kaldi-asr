@@ -71,17 +71,22 @@ function try_with_location($temp_disk) {
     syslog(LOG_WARNING, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
     return false;
   }
-  if (filesize($temp_file) == 0) {
-    syslog(LOG_WARNING, "tar command produced empty output.");
+  $size_bytes = filesize($temp_file);
+  if ($size_bytes === false || $size_bytes == 0) {
+    syslog(LOG_WARNING, "get_archive.php?id=$id: tar command produced empty or no output.");
     return false;
   }
   if (! ($fptr = fopen($temp_file, "r"))) {
     syslog(LOG_ERR, "get_archive.php?id=$id: error opening $temp_file for reading (this should not happen)");
     if (!unlink($temp_file)) {
-      syslog(LOG_ERR, "error deleting $temp_file");
+      syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $temp_file");
     }
     return false;
   }
+  header('Content-Type: application/octet-stream');
+  header('Content-Disposition: attachment; filename="archive.tar.gz"');
+  header("Content-Length: $size_bytes");
+
   if (!fpassthru($fptr)) {
     syslog(LOG_ERR, "get_archive.php?id=$id, error status returned from fpassthru, file is $temp_file");
     return false;
