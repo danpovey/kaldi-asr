@@ -66,7 +66,7 @@ function try_with_location($temp_disk) {
     syslog(LOG_ERR, "get_archive.php?id=$id: error creating temporary file in directory $temp_disk");
     return false;
   }
-  $output = system("tar czf -C $build_location $temp_file", $return_status);
+  $output = system("tar czf $temp_file -C $build_location .", $return_status);
   if ($return_status != 0) {
     syslog(LOG_WARNING, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
     return false;
