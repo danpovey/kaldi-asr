@@ -1,12 +1,10 @@
 #!/usr/bin/perl
 
-# function myssh { foreach
-
 use Getopt::Long;
 binmode(STDIN);
 
-my $submission_root = "/mnt/kaldi_asr_data/submitted";
-my $submission_root = "/Users/danielpovey/temp_data";
+my $submission_root = "/mnt/kaldi-asr-data/submitted";
+# my $submission_root = "/Users/danielpovey/temp_data";
 my $block_size = 65536;   # affects memory usage, and how many hash marks are printed.
 
 my $note;
@@ -17,7 +15,7 @@ my $root;
 
 $usage_message = "$0: usage: ssh uploads\@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name \\\"<your name>\\\" --note \\\"<your note>\\\" --root <archive-root> < (your data)\n" .
    "  e.g.: cd egs/wsj\n" .
-   "  tar cvz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name \\\"Daniel_Povey\\\" --root egs/wsj  --note \\\"Building standard parts of WSJ script\\\"\n" .
+   "  tar cz s5/{data,exp} | ssh uploads\@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk --name \\\"Daniel Povey\\\" --root egs/wsj  --note \\\"Building standard parts of WSJ script\\\"\n" .
   " note, the quotes do need to be escaped; it relates to the way ssh works.\n";
 
 
