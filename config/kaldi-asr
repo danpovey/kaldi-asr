@@ -17,8 +17,9 @@
 
        RewriteEngine on
        # RewriteBase /var/www/kaldi-asr
-       RewriteRule ^downloads/build/(.+)/index.html$ downloads/build_indexes/$1/index.html
-       RewriteRule ^downloads/build/(.+)/archive.tar.gz$ /get_archive.php?id=$1
+       RewriteRule ^/?downloads/build/(.+)/index.html$ /downloads/build_index/$1/index.html
+       RewriteRule ^/?downloads/build/(.+)/$ /downloads/build_index/$1/index.html
+       RewriteRule ^/?downloads/build/(.+)/archive.tar.gz$ /get_archive.php?id=$1
 	</Directory>
     <Directory /var/www/kaldi-asr/.git>
        deny from all
