@@ -5,10 +5,9 @@
 
 
 	DocumentRoot /var/www/kaldi-asr
-	<Directory />
-		Options -Indexes
-               #was: Options FollowSymLinks Indexes
-		AllowOverride All
+	<Directory /mnt/kaldi-asr-data>
+         #was: Options FollowSymLinks Indexes
+		AllowOverride None
 	</Directory>
 	<Directory /var/www/kaldi-asr>
 		Options FollowSymLinks
