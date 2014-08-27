@@ -24,6 +24,6 @@ for branch in $branch_list; do
   fi
 done
 
-log_message "successfully compiled all branch indexes."
+log_message "successfully compiled branch indexes for $branch_list"
 
 exit 0;
