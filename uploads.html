@@ -44,8 +44,8 @@
  When you are ready to submit, the usage is as follows (and note that ssh will prompt for your password, which
  Dan will give you).
 <pre>
-ssh uploads@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name \"<your name>\" \
-    --note \"<your note>\" --root <archive-root> < (your data)
+ssh uploads@kaldi-asr.org accept_data.pl --revision &lt;kaldi-svn-revision&gt; --branch &lt;branch-name&gt; --name \"&lt;your name&gt;\" \
+    --note \"&lt;your note&gt;\" --root &lt;archive-root&gt; &lt; (your data)
 </pre>
 A concrete example is as follows:
 <pre>
@@ -74,7 +74,7 @@ A concrete example is as follows:
  cd ~/kaldi-trunk/egs/wsj
  cp -r s5 s5.upload
  cd s5.upload
- # <do any cleanup you need to do>
+ # &lt;do any cleanup you need to do&gt;
  tar cz data exp | ssh uploads@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk \
       --name \"Daniel Povey\" --root egs/wsj/s5  --note \"Building the standard parts of WSJ script\"
 </pre>
