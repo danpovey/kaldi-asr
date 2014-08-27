@@ -5,6 +5,7 @@ binmode(STDIN);
 
 my $submission_root = "/mnt/kaldi-asr-data/submitted";
 # my $submission_root = "/Users/danielpovey/temp_data";
+
 my $block_size = 65536;   # affects memory usage, and how many hash marks are printed.
 
 my $note;
@@ -175,7 +176,15 @@ $common_prefix = <F>;
 if (!defined $common_prefix) { # F was empty.
   die "$0: unable to list contents of archive.\n";
 }
+$count = 0;
 while (<F>) {
+  chop;
+  $count++;
+  if ($count == 1 || $count == 10 || $count == 100 || $count == 1000) {
+    $example_path = $_; # this is an arbitrary line from somewhere in the middle
+                        # of the archive; we'll use this to show the user an
+                        # example of a typical path.
+  }
   if (length($_) > length($common_prefix)) {
     $_ = substr($_, 0, length($common_prefix));
   }
@@ -185,21 +194,24 @@ while (<F>) {
   ($_ ^ $common_prefix) =~ /^(\0*)/;
   $common_prefix = substr($common_prefix, 0, length($1));
 }
-print STDERR "$0: common prefix of uploaded files in archive was '$common_prefix'\n";
-print STDERR "$0: your files will be located at $branch/$root/$common_prefix; if this does not look right, let me know.\n";
-if (!close(F)) {
-  die "$0: error closing command $cmd, failed with status $?";
-}
 if ($common_prefix =~ m:^/:) { 
   # common_prefix starts with a /, meaning archive had absolute pathnames.
   die "$0: error in your archive, it has absolute pathnames.";
 }
 $common_prefix =~ s:[^/]$::g;  # Remove any trailing characters that are not "/".
-                              # These could exist if there were directories or
-                              # files that started with the same letter.
+                               # These could exist if there were directories or
+                               # files that started with the same letter.
+$common_prefix =~ s:^\./::; # remove any leading ./ from the directory name.
 $common_prefix =~ s:/$::; # remove any trailing slash from the directory name.
 
-print STDERR "$0: [info], common prefix of uploaded files in archive normalized to '$common_prefix'\n";
+$example_path =~ s:^\./::; # remove any leading ./ from the example path.
+
+
+print STDERR "$0: common prefix of uploaded files in archive was '$common_prefix'\n";
+print STDERR "$0: a randomly chosen file from your submission is located at $branch/$root/$example_path; if this location does not look right, follow the instructions below to remove your submission.\n";
+if (!close(F)) {
+  die "$0: error closing command $cmd, failed with status $?";
+}
 
 { # We're checking that the user has not put the same thing in their "$branch/$root" and their
   # common_prefix, for example if "$branch/$root" = "/trunk/egs/wsj/s5" and
@@ -220,8 +232,11 @@ print STDERR "$0: [info], common prefix of uploaded files in archive normalized 
 }
 
 # Creating this file lets me know that I haven't processed it yet.
-$cmd = "touch $tempdir/QUEUED";
-if (system($cmd) != 0) {
+# I'll make it world writable so the separate userid that builds the site
+# can zero it; as long as it has contents we'll know the data is queued.
+$cmd1 = "echo queued > $tempdir/QUEUED";
+$cmd2 = "chmod a+w $tempdir/QUEUED";
+if (system($cmd1) != 0 || system($cmd2) != 0) {
   die "failed to create QUEUED file";
 }
 
@@ -246,4 +261,7 @@ if (system("mv $tempdir $submission_root/$build") != 0) {
 }
 
 print "$0: succeeded uploading build number $build.  Please ask dpovey\@gmail.com to rebuild the site.\n";
+print "$0: if you realize that something is wrong with your data before we rebuild the site, you can remove it with this command:\n";
+print "   ssh uploads\@kaldi-asr.org remove_data.pl --name \\\"$name\\\" $build\n";
+
 exit(0);
