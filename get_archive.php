@@ -6,14 +6,14 @@
 //  get_archive.php?id=10/trunk/egs/wsj/s5
 
 $id = $_GET["id"]; // e.g. 10/trunk/egs/wsj/s5
-if (!defined $id) {
-   syslog(LOG_WARN, "get_archive.php called without the ?id=XXX option");
+if (!isset($id)) {
+   syslog(LOG_WARNING, "get_archive.php called without the ?id=XXX option");
    print "<html> <body> Error getting archive, expected the ?id=XXX option to be given.  </body> </html>\n";
    http_response_code(404);
    exit(0);
 }
 if (preg_match('#^[0-9]+/#', $id) != 1) {
-   syslog(LOG_WARN, "get_archive.php?id=$id: invalid id option");
+   syslog(LOG_WARNING, "get_archive.php?id=$id: invalid id option");
    print "<html> <body> Error getting archive, invalid id option id=$id  </body> </html>\n";
    http_response_code(404);
    exit(0);
@@ -21,7 +21,7 @@ if (preg_match('#^[0-9]+/#', $id) != 1) {
 
 $id_norm = htmlspecialchars($id);
 $doc_root = $_SERVER["DOCUMENT_ROOT"];
-if (!defined $doc_root) { 
+if (!isset($doc_root)) { 
   print "<html> <body> Error getting document root  </body> </html>\n";
   http_response_code(501);
   exit(0);
@@ -66,11 +66,11 @@ function try_with_location($temp_disk) {
   }
   $output = system("tar czf -C $build_location $temp_file", $return_status);
   if ($return_status != 0) {
-    syslog(LOG_WARN, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
+    syslog(LOG_WARNING, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
     return false;
   }
   if (filesize($temp_file) == 0) {
-    syslog(LOG_WARN, "tar command produced empty output.");
+    syslog(LOG_WARNING, "tar command produced empty output.");
     return false;
   }
   if (! ($fptr = fopen($temp_file, "r"))) {
