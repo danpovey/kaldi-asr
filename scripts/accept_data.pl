@@ -118,7 +118,10 @@ if (system($cmd) != 0) {
 $cmd = "mktemp -d $submission_root/tmp.XXXXX";
 $tempdir = `$cmd`;
 if ($? != 0 || $tempdir !~ m:^\S+$:) {
-  die "failed to make temporary directory (server problem, maybe full disk)\n";
+  die "failed to make temporary directory (server problem, maybe full disk)";
+}
+if (system("chmod a+rx $tempdir") != 0) {
+  die "failed to change mode of $tempdir";
 }
 chop $tempdir;
 

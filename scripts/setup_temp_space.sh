@@ -66,5 +66,5 @@ rm tmp.large/* tmp.small/* || true
 
 for x in tmp.small tmp.large; do
   chown -R www-data:www-data $x/
-  chmod 600 $x
+  chmod 755 $x/
 done

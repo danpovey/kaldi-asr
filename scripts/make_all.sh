@@ -43,7 +43,7 @@ if $all; then
   else
     log_message "processing all build indexes (but not extracting previously-extracted archives)"
   fi
-  if ! index_list=$(get_index_list.sh); then
+  if ! index_list=$(get_submitted_index_list.sh); then
     log_message "error getting index list"
     exit 1;
   fi
@@ -58,7 +58,7 @@ if $all; then
   done
 else
   log_message "processing new build indexes"
-  if ! index_list=$(get_index_list.sh --queued); then
+  if ! index_list=$(get_submitted_index_list.sh --queued); then
     log_message "error getting index list"
     exit 1;
   fi
