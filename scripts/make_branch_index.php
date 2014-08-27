@@ -179,6 +179,12 @@ ksort($subdirs, SORT_STRING); // sort low to high on key [string]
           <div id="headerRight"> <image id="logoImage" src="/kaldi_logo.png">  </div>
         </div>
         <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/downloads/all">Downloads</a>
+          <a class="myTopButton" href="/uploads.html">Uploading your builds</a>
+        </div>
+        <hr>
 
         <div id="mainContent">
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="description" content="Kaldi ASR"/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="/style.css"/> 
+    <title>Kaldi ASR</title>
+    
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft">  <image id="logoImage" src="/kaldi_text_and_logo.png"> </div>
+         <div id="headerRight"> <image id="logoImage" src="/kaldi_logo.png">  </div>
+          <!--   <h2 class="kaldiStyle"> Kaldi </h2> -->
+       
+        </div>
+        <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/downloads/all">Downloads</a>
+          <a class="myTopButton" href="/uploads.html">Uploading your builds</a>
+        </div>
+        <hr>
+
+        <div id="rightCol">
+          <div class = "contact_info">
+            <div class="contactTitle">Contact</div>
+            <a href=mailto:dpovey@gmail.com> dpovey@gmail.com </a>  <br/>
+            Phone: 425 247 4129  <br/>
+            (Daniel Povey) <br/>
+          </div>
+        </div>
+        
+
+        <div id="mainContent">
+
+          <div class= "container" >
+	        <p><h3 class="kaldiStyle"> How to upload your data </h3>
+
+ Before uploading your builds, please talk with Dan Povey: <a href=mailto:dpovey@gmail.com> dpovey@gmail.com </a>  <br/>.
+ When you are ready to submit, the usage is as follows (and note that ssh will prompt for your password, which
+ Dan will give you).
+<pre>
+ssh uploads@kaldi-asr.org accept_data.pl --revision <kaldi-svn-revision> --branch <branch-name> --name \"<your name>\" \
+    --note \"<your note>\" --root <archive-root> < (your data)
+</pre>
+A concrete example is as follows:
+<pre>
+  cd ~/kaldi-trunk/egs/wsj/s5
+  tar cz data exp | ssh uploads@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk \
+     --name \"Daniel Povey\" --root egs/wsj/s5  --note \"Building the standard parts of WSJ script\"
+</pre>
+ For larger builds it will make sense to clean up your output before submitting,
+ e.g. remove intermediate neural net model builds and egs/ directories, lattices (if they are large)
+ and compiled graphs (fsts.*.gz); otherwise it will incur more server fees for storing the data.
+ The command "du -k " will be useful in figuring out where most of the space is taken up, and you
+ should tell Dan the total size of data that you intend to upload.
+<p>
+ For non-free data you may also have to do some cleanup as required by the copyright.
+ If your dataset comes from the LDC or a similar non-free provider of data, most likely 
+ the transcripts should not be released, so before uploading your build you should probably
+ do something like
+<pre>
+ for x in data/*/text; do
+   echo "This file cannot be provided at kaldi-asr.org, for copyright reasons" > $x
+ done
+</pre>
+ If you want to avoid ruining your existing build directory by doing this type of thing,
+ it probably makes sense to copy it to a different location.  For example:
+<pre>
+ cd ~/kaldi-trunk/egs/wsj
+ cp -r s5 s5.upload
+ cd s5.upload
+ # <do any cleanup you need to do>
+ tar cz data exp | ssh uploads@kaldi-asr.org accept_data.pl --revision 4131 --branch trunk \
+      --name \"Daniel Povey\" --root egs/wsj/s5  --note \"Building the standard parts of WSJ script\"
+</pre>
+ 
+<p>
+ After you upload the data, it will not show up on the website automatically; you have to 
+ ask Dan to rebuild the site. 
+
+          <div style="height:300px"></div>
+
+        </div>
+      </div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+      <div style="clear: both"></div>
+
+      <div id="footer"> 
+        <p>
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+	        <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+                 alt="Valid CSS!" />
+	      </a>
+        </p>
+      </div>
+    </div>
+  </body>      
+</html>
+
