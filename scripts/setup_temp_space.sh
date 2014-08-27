@@ -5,13 +5,20 @@ if [ $(id -u) != 0 ]; then
   exit 1
 fi
 
+if ! mount | grep kaldi-asr-data; then
+  echo You need to mount /mnt/kaldi-asr-data before calling this script
+  exit 1
+fi
+
+umount /mnt/kaldi-asr-loopback || true
+
 # first remove any existing loop devices
-for device in $(losetup -a | grep loopback_file | awk '{print $1}'); do
+for device in $(losetup -a | sed 's/:/ /g' | awk '{print $1}'); do
   losetup -d $device
 done
 
-for device $(losetup -a); do 
-  echo Was expecting other loopback devices to exist: device $device exists.
+for device in $(losetup -a); do 
+  echo Was not expecting other loopback devices to exist: device $device exists.
   exit 1;
 done
 
@@ -45,14 +52,19 @@ if ! [ -e /mnt/kaldi-asr-loopback/lost+found ]; then
   exit 1;
 fi
 
-rm tmp.small
+if [ -e tmp.small ]; then
+   rm tmp.small
+fi
 ln -s /mnt/kaldi-asr-loopback tmp.small
 
 mkdir -p /mnt/kaldi-asr/tmp
-rm tmp.large
+if [ -e tmp.large ]; then
+   rm tmp.large
+fi
 ln -s /mnt/kaldi-asr/tmp tmp.large
+rm tmp.large/* tmp.small/* || true
 
 for x in tmp.small tmp.large; do
-  chown -R www-data:www-data $x
+  chown -R www-data:www-data $x/
   chmod 600 $x
 done
