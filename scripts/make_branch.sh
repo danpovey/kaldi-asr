@@ -57,7 +57,6 @@ if ! make_branch_recursive.sh $branch '' $index_list; then
 fi
 
 if [ -d $final_output ]; then
-  log_message "moving old tree location $final_output to $final_output.delete"
   rm -rf $final_output.delete  # just in case it already exists.
   if ! mv $final_output $final_output.delete; then
     log_message "error moving old tree location $final_output"

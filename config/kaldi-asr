@@ -3,29 +3,31 @@
 	ServerName kaldi-asr.org
 	ServerAlias www.kaldi-asr.org
 
+
 	DocumentRoot /var/www/kaldi-asr
 	<Directory />
 		Options -Indexes
-                #was: Options FollowSymLinks Indexes
+               #was: Options FollowSymLinks Indexes
 		AllowOverride All
 	</Directory>
 	<Directory /var/www/kaldi-asr>
-		Options Indexes FollowSymLinks MultiViews
-                IndexHeadInsert '<link rel="icon" type="image/png" href="/kaldi_ico.png"/>'
-		AllowOverride All
+		Options FollowSymLinks
+		AllowOverride None
 		Order allow,deny
 		allow from all
 
        RewriteEngine on
        # RewriteBase /var/www/kaldi-asr
-       # RewriteRule ^([0-9]+)$ directory.php?id=$1
-       # RewriteRule ^([0-9]+)/$ directory.php?id=$1
-       # RewriteRule ^([0-9]+)/index.html$ directory.php?id=$1
+       RewriteRule ^downloads/build/(.+)/index.html$ downloads/build_indexes/$1/index.html
+       RewriteRule ^downloads/build/(.+)/archive.tar.gz$ /get_archive.php?id=$1
 	</Directory>
     <Directory /var/www/kaldi-asr/.git>
        deny from all
     </Directory>
     <Directory /var/www/kaldi-asr/config>
+       deny from all
+    </Directory>
+    <Directory /var/www/kaldi-asr/scripts>
        deny from all
     </Directory>
 

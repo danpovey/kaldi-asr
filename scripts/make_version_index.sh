@@ -48,7 +48,6 @@ for x in $(find $dir -type d); do
     exit 1;
   fi
   x_relative=$(echo $x | sed s:^$dir:: | sed s:^/::);
-  echo php make_version_index.php $data_root $build $x_relative
   # note, $x_relative may be the empty string; this is valid.
   if ! php make_version_index.php $data_root $build "$x_relative" > $x/index.html; then
     log_message "Error making index.html in directory $x"
