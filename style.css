@@ -71,7 +71,6 @@ hr {
  background-color:#5C3200;
 }
 #topBar{
-word-spacing:12px;
 padding-left:20px;
 white-space:nowrap;
 height:1.2em;
@@ -93,7 +92,7 @@ a.myTopButton{
 color:#5C3200;
 }
 .topButtons{
-/*background-color: #ffffff;*/
+padding:0px 6px 0px 6px;
 }
 .contact_info{
 font-family: Calibri,Arial,Sans Serif;
