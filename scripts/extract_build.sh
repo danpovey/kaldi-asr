@@ -79,6 +79,34 @@ fi
 
 log_message "successfully extracted data to $extraction_root"
 
+
+## Now, fix up the permissions of the extracted data, in case the user who uploaded them
+## had a weird umask or did something strange with the permissions.
+## I want all directories to have the normal permission 755, everything group and
+## world-readable, and anything that's user executable to be world-executable.
+## note: permissions of symlinks are never used by UNIX so we can just
+## ignore them.
+
+# Change all directories to mode 755.
+if ! find "$extraction_root" -type d -exec chmod 755 {} \;  ; then
+  log_message "failed to change directory permissions to the normal ones."
+  exit 1;
+fi
+
+# Make all files world-readable, and not world or group-writable.
+if ! find "$extraction_root" -type f -exec chmod a+r,go-w {} \; ; then
+  log_message "failed to change permissions to all world readable."
+  exit 1;
+fi
+
+# all user-executable files should be executable by everyone.
+for x in $(find "$extraction_root" -type f); do
+  if [ -x "$x" ]; then
+    chmod a+x "$x"
+  fi
+done
+
+
 if [ -d $destdir ]; then
   log_message "removing old copy of processed data, in $destdir"
   if ! rm -r $destdir; then

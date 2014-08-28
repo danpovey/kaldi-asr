@@ -49,10 +49,11 @@ if $all; then
   fi
   for index in $index_list; do
     if $extract_all || [ -s $data_root/submitted/$index/QUEUED ]; then
-      extract_opt=true
+      extract_opt="--extract"
     fi
     if ! process_version.sh $extract_opt $index; then
-      log_message "error processing build for index $index; terminating script."
+      log_message "error processing build for index $index; terminating script.  Command was:"
+      log_message "process_version.sh $extract_opt $index"
       exit 1;
     fi
   done
