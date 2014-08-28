@@ -12,7 +12,7 @@
     <meta name="description" content="Kaldi ASR"/>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
-    <link rel="stylesheet" type="txt/css" href="/indexes.css"/> 
+    <link rel="stylesheet" type="text/css" href="/indexes.css"/> 
     <title>Kaldi ASR</title>
 
 <?php
