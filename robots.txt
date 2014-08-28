@@ -1,2 +1,2 @@
-User-agent: foo
+User-agent: *
 Disallow: /downloads
