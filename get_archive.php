@@ -45,6 +45,27 @@ if ($file_contents === false || count($file_contents) != 1
 }
 $size_kb = $file_contents[0];
 
+function cleanup_location($temp_disk) {
+  $list = scandir($temp_disk);
+  if ($list === false) { return false; }
+  $wait_seconds = 60; // After a minute of not being accessed or modified,
+                      // we assume that the file is an orphan.
+  foreach ($list as $entry) {
+    $path = "$temp_disk/$entry";
+    if (is_file ($path)) {
+      $access_interval = time() - fileatime($path);
+      $modify_interval = time() - filemtime($path);
+      if ($access_interval > $wait_seconds && $modify_interval > $wait_seconds) {
+        syslog(LOG_WARNING, "get_archive.php?id=$id: found what appears to be orphan file $path: has not been (accessed,modified) for ($access_interval,$modify_interval) seconds.  Deleting it.");
+        if (unlink($path)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error unlinking $path");
+        }
+      }
+    }
+  } 
+  return true;
+}
+
 function try_with_location($temp_disk) {
   global $size_kb, $build_location, $id;
 
@@ -102,13 +123,17 @@ function try_with_location($temp_disk) {
 }
 
 
-// We need to confirm that we have enough free space to do what we want to do.
 // We have two scratch spaces, one local at $doc_root/tmp.small, and one
 // remote at $doc_root/tmp.large.
+
+cleanup_location("$doc_root/tmp.small");
 
 if (try_with_location("$doc_root/tmp.small")) {
   exit(0);
 }
+
+cleanup_location("$doc_root/tmp.large");
+
 if (try_with_location("$doc_root/tmp.large")) {
   exit(0);
 }
