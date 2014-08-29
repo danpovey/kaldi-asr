@@ -80,8 +80,8 @@ $this_dir_size_kb = $file_contents[0];
 $this_dir_size_human = human_readable_size(1024 * $this_dir_size_kb);
 // note: although the file is in $root/build_index/$build/<directory>,
 // the URL says just 'build', not 'build_index': we do it with mod_rewrite.
-$build_url = "/downloads/build/$build$slash_directory/";
-$tree_url = "/downloads/tree$slash_directory/";
+$build_url = "/downloads/build/$build$slash_directory";
+$branch_url = "/downloads/tree$slash_directory";
 
 $subdir_name_to_size_kb = array(); // Map from name of subdirectories of this
                                    // directory to size in kilobytes.
@@ -95,7 +95,7 @@ if (!($handle = opendir($srcdir))) {
    exit(1);
 }
 while (($file = readdir($handle)) !== false) { 
-  if ($file == '.' || ($file == '..' && $slash_directory == '')) { 
+  if ($file == '.' || $file == '..') {
     continue; 
   } elseif (is_link($srcdir."/".$file)) {
     $dest = readlink($srcdir."/".$file);
@@ -154,7 +154,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
         <div id="mainContent">
 
         <h3>
-          <?php print "Index of /$directory/ in build $build; <a href='$tree_url'> [see all builds] </a>"; ?>
+          <?php print "Index of /$directory/ in build $build; <a href='$branch_url/'> [see all builds] </a>"; ?>
         </h3>
 
         <div class="boxed">
@@ -167,7 +167,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
       if (1024 * $this_dir_size_kb > $max_downloadable_size_bytes) {
         print "[This directory is too big to download]  Un-compressed size is $this_dir_size_human <br>\n";
       } else {
-        print "<a href='/downloads/build/$build$slash_directory/archive.tar.gz'> [Download archive of this directory] </a> (Size &le; $this_dir_size_human) " .
+        print "<a href='$build_url/archive.tar.gz'> [Download archive of this directory] </a> (Size &le; $this_dir_size_human) " .
            ($this_dir_size_kb > 1000 ? "Expect a short delay." : "") . " <br>\n";
       }
     ?>
@@ -179,7 +179,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
      // Note regarding $href: the actual index is located in build_index, the
      // external url just says 'build' and we redirect it in the apache config.
      $subdir_size_human = ($subdir == '..' ? '-' : human_readable_size(1024 * $subdir_size_kb));
-     $href = "/downloads/build/$build$slash_directory/$subdir/"; 
+     $href = "$build_url/$subdir/"; 
      print "<tr> <td><a href='$href'> $subdir/ </td> <td> $subdir_size_human </td> </tr>\n";
    }
    foreach ($file_name_to_size_bytes as $file => $file_size_bytes) {
@@ -193,13 +193,15 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
        // maybe putting a href in here, if users ask for this feature.
        $link_dest = substr($link_dest, 0, $max_link_dest_length - 2) . '..';     }
      print "<tr> <td> $link_name &rarr; $link_dest </td> <td> - </td> </tr>\n";
-   } ?>
-         </table>
-
-
+   }
+   print "</table>\n";
+   if ($slash_directory != '') {
+     print "           <p/>\n";
+     print "           <a href='$build_url/../'> [parent directory] </a> <br/>\n";
+   }   ?>
+        <p/>
        </div>  <!-- main content.  -->
       </div> 
     </div>
   </body>      
 </html>
-

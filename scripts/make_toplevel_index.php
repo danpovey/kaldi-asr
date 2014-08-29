@@ -169,7 +169,7 @@ ksort($subdirs, SORT_STRING); // sort low to high on key [string]
         print "           <a href='$my_url/..'> [parent directory] </a> <br>\n";
       }
    ?>
-
+        <p>
        </div>  <!-- main content.  -->
       </div> 
     </div>
