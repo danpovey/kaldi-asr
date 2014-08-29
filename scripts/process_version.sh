@@ -15,8 +15,8 @@ if [ $# -ne 1 ] || ! [ "$1" -gt 0 ]; then
   echo "Usage: $0 [--extract] <version-number>"
   echo "e.g.: $0 --extract 15"
   echo "This script will process the data in $root/submitted/<version-number>"
-  echo "with output in $data_root/build/<version-number>.  But it will only do the"
-  echo "data-extraction part (un-tarring the archive) if you use the"
+  echo "with output in $data_root/build/<version-number>.  But it will not do the"
+  echo "data-extraction part (un-tarring the archive) unless you use the"
   echo "--extract option."
   exit 1;
 fi

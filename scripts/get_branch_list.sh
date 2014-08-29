@@ -21,7 +21,7 @@ for subdir in $data_root/build/[0-9]*; do
   for sandbox_or_branches in sandbox branches; do
     if [ -d $subdir/$sandbox_or_branches ]; then 
       for x in $(ls $subdir/$sandbox_or_branches); do 
-        if [ -d $subdir/$sandbox_or_branches/$x ]; then echo $x; fi
+        if [ -d $subdir/$sandbox_or_branches/$x ]; then echo $sandbox_or_branches/$x; fi
       done
     fi
   done

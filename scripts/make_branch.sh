@@ -64,7 +64,7 @@ if [ -d $final_output ]; then
   fi
 fi
 
-mkdir -p $(basename $final_output) # make sure that the directory one up from $final_output exists,
+mkdir -p $(dirname $final_output) # make sure that the directory one up from $final_output exists,
                                    # e.g. the directory $data_root/tree/sandbox
 if ! mv $temp_output $final_output || ! [ -f $final_output/index.html ]; then
   log_message "error moving temporary output to final location $final_output"  
