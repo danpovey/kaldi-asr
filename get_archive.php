@@ -51,7 +51,7 @@ function try_with_location($temp_disk) {
   // $temp_disk will be $doc_root/tmp.small or $doc_root/tmp.large
   // This function will return true if we fulfilled the request for the archive using 
   // this temp location, and otherwise false.
-  $free_space_bytes = disk_total_space("$temp_disk");
+  $free_space_bytes = disk_free_space("$temp_disk");
   if ($size_kb * 1024 >= $free_space_bytes) { 
     // We may not have enough space, so don't try.
     // Note, there is a certain safety factor built in here because of the gzipping, but
@@ -68,7 +68,10 @@ function try_with_location($temp_disk) {
   }
   $output = system("tar czf $temp_file -C $build_location .", $return_status);
   if ($return_status != 0) {
-    syslog(LOG_WARNING, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
+    syslog(LOG_ERR, "get_archive.php?id=$id: tar command exited with nonzero status $return_status, output was: " . substr($output, 0, 150));
+    if (!unlink($temp_file)) {
+      syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $temp_file");
+    }
     return false;
   }
   $size_bytes = filesize($temp_file);
