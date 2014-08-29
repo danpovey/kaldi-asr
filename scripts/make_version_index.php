@@ -81,7 +81,7 @@ $this_dir_size_human = human_readable_size(1024 * $this_dir_size_kb);
 // note: although the file is in $root/build_index/$build/<directory>,
 // the URL says just 'build', not 'build_index': we do it with mod_rewrite.
 $build_url = "/downloads/build/$build$slash_directory/";
-$all_url = "/downloads/all$slash_directory/";
+$tree_url = "/downloads/tree$slash_directory/";
 
 $subdir_name_to_size_kb = array(); // Map from name of subdirectories of this
                                    // directory to size in kilobytes.
@@ -154,7 +154,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
         <div id="mainContent">
 
         <h3>
-          <?php print "Index of /$directory/ in build $build; <a href='$all_url'> [see all builds] </a>"; ?>
+          <?php print "Index of /$directory/ in build $build; <a href='$tree_url'> [see all builds] </a>"; ?>
         </h3>
 
         <div class="boxed">
