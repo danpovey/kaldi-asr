@@ -95,7 +95,7 @@ if (!($handle = opendir($srcdir))) {
    exit(1);
 }
 while (($file = readdir($handle)) !== false) { 
-  if ($file == '.' || $file == '..') { 
+  if ($file == '.' || ($file == '..' && $slash_directory == '')) { 
     continue; 
   } elseif (is_link($srcdir."/".$file)) {
     $dest = readlink($srcdir."/".$file);
@@ -167,19 +167,19 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
       if (1024 * $this_dir_size_kb > $max_downloadable_size_bytes) {
         print "[This directory is too big to download]  Un-compressed size is $this_dir_size_human <br>\n";
       } else {
-        print "<a href='/downloads/build/$build$slash_directory/archive.tar.gz'> [Download archive of this directory] </a> Un-compressed size is $this_dir_size_human. " .
+        print "<a href='/downloads/build/$build$slash_directory/archive.tar.gz'> [Download archive of this directory] </a> (Size &le; $this_dir_size_human) " .
            ($this_dir_size_kb > 1000 ? "Expect a short delay." : "") . " <br>\n";
       }
     ?>
 
        <table style="margin-top:0.2em">
-        <tr>  <th>Name</th>    <th>Size</th>    </tr>
+        <tr>  <th>Name</th>    <th>Size (total: <?php print $this_dir_size_human; ?>) </th>    </tr>
 <?php
    foreach ($subdir_name_to_size_kb as $subdir => $subdir_size_kb) {
      // Note regarding $href: the actual index is located in build_index, the
      // external url just says 'build' and we redirect it in the apache config.
-     $subdir_size_human = human_readable_size(1024 * $subdir_size_kb);
-     $href = "/downloads/build/$build$slash_directory/$subdir/index.html"; 
+     $subdir_size_human = ($subdir == '..' ? '-' : human_readable_size(1024 * $subdir_size_kb));
+     $href = "/downloads/build/$build$slash_directory/$subdir/"; 
      print "<tr> <td><a href='$href'> $subdir/ </td> <td> $subdir_size_human </td> </tr>\n";
    }
    foreach ($file_name_to_size_bytes as $file => $file_size_bytes) {
