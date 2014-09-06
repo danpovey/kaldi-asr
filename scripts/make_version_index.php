@@ -83,6 +83,9 @@ $this_dir_size_human = human_readable_size(1024 * $this_dir_size_kb);
 $build_url = "/downloads/build/$build$slash_directory";
 $branch_url = "/downloads/tree$slash_directory";
 
+// Detect when we're too high up in the tree to go to $branch_url, e.g. if we're in /sandbox/ or /,
+// In this instead of saying "see all builds", we'll have to say "see all branches".
+
 $subdir_name_to_size_kb = array(); // Map from name of subdirectories of this
                                    // directory to size in kilobytes.
 $file_name_to_size_bytes = array(); // Map from name of file in this directory to
@@ -154,7 +157,11 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
         <div id="mainContent">
 
         <h3>
-          <?php print "Index of /$directory/ in build $build; <a href='$branch_url/'> [see all builds] </a>"; ?>
+          <?php if ($slash_directory == '' || $slash_directory == '/sandbox') {
+              print "Index of $slash_directory/ in build $build; <a href='/downloads/all/'> [see all branches] </a>";
+            } else {
+              print "Index of $slash_directory/ in build $build; <a href='$branch_url/'> [see all builds] </a>";
+            }   ?> 
         </h3>
 
         <div class="boxed">
