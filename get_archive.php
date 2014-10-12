@@ -5,13 +5,15 @@
 // into something of the form
 //  get_archive.php?id=10/trunk/egs/wsj/s5
 
-$id = $_GET["id"]; // e.g. 10/trunk/egs/wsj/s5
-if (!isset($id)) {
+if (!isset($_GET["id"])) {
    syslog(LOG_WARNING, "get_archive.php called without the ?id=XXX option");
    print "<html> <body> Error getting archive, expected the ?id=XXX option to be given.  </body> </html>\n";
    http_response_code(404);
    exit(0);
+} else {
+  $id = $_GET["id"]; // e.g. 10/trunk/egs/wsj/s5
 }
+
 if (preg_match('#^[0-9]+/#', $id) != 1) {
    syslog(LOG_WARNING, "get_archive.php?id=$id: invalid id option");
    print "<html> <body> Error getting archive, invalid id option id=$id  </body> </html>\n";
@@ -46,6 +48,7 @@ if ($file_contents === false || count($file_contents) != 1
 $size_kb = $file_contents[0];
 
 function cleanup_location($temp_disk) {
+  global $id;
   $list = scandir($temp_disk);
   if ($list === false) { return false; }
   $wait_seconds = 60; // After a minute of not being accessed or modified,
