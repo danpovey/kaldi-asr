@@ -89,6 +89,11 @@ function try_with_location($temp_disk) {
   if ($temp_file === false) {
     syslog(LOG_ERR, "get_archive.php?id=$id: error creating temporary file in directory $temp_disk");
     return false;
+  } elseif (preg_match('#^/tmp#', $temp_file) > 0) {
+    syslog(LOG_ERR, "get_archive.php?id=$id: error creating temporary file in directory $temp_disk, got answer in $temp_file (permission issue?)");  
+    return false;
+  } else {
+    syslog(LOG_INFO, "get_archive.php?id=$id: created temporary file in $temp_file, temp_disk=$temp_disk");
   }
   $output = system("tar czf $temp_file -C $build_location .", $return_status);
   if ($return_status != 0) {
