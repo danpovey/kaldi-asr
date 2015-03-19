@@ -69,7 +69,7 @@ function cleanup_location($temp_disk) {
   return true;
 }
 
-function try_with_location($temp_disk) {
+function create_temp_archive($temp_disk) {
   global $size_kb, $build_location, $id;
 
   // $temp_disk will be $doc_root/tmp.small or $doc_root/tmp.large
@@ -108,7 +108,90 @@ function try_with_location($temp_disk) {
     syslog(LOG_WARNING, "get_archive.php?id=$id: tar command produced empty or no output.");
     return false;
   }
-  if (! ($fptr = fopen($temp_file, "r"))) {
+  return $temp_file;
+}
+
+function try_with_location($archive_loc, $temp_disk) {
+  global $size_kb, $build_location, $id;
+
+  if (! file_exists($archive_loc) )    {
+    $file_lock_name = $archive_loc . ".lock";
+    $file_lockd = fopen($file_lock_name, "w");
+    if (! $file_lockd ) {
+      syslog(LOG_ERR, "get_archive.php?id=$id: error opening $file_lock_name");
+      return false;
+    }
+    if (flock($file_lockd, LOCK_EX )) {
+      if (file_exists($archive_loc) ){
+        // This would mean that we were competing for the lock
+        // and someone and the guy that held the lock before us
+        // already created the archiv.
+        // To make things easy, we will return fail here,
+        // The upper script will call us again (albeit with different
+        // temp_disc location -- but that won't matter anyway,
+        // as we will proceed directly to streaming the archive
+        // we will need to take care of unlocking and cleaning...
+        
+        if (!flock($file_lockd, LOCK_UN)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error unlocking $file_lock_name");
+        }
+        if (!fclose($file_lockd)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error closing $file_lock_name");
+        }
+        if (!unlink($file_lock_name)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $file_lock_name");
+        }
+        return false;
+      }
+
+      $temp_file = create_temp_archive($temp_disk);
+      if ( ! $temp_file ) {
+        syslog(LOG_ERR, "get_archive_php?id=$id: error preparing the archive $temp_file into $archive_loc ");
+        if (!flock($file_lockd, LOCK_UN)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error unlocking $file_lock_name");
+        }
+        if (!fclose($file_lockd)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error closing $file_lock_name");
+        }
+        if (!unlink($file_lock_name)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $file_lock_name");
+        }
+        return false;
+      }
+      if ( ! rename($temp_file, $archive_loc) ) {
+        syslog(LOG_ERR, "get_archive_php?id=$id: error moving the $temp_file into $archive_loc ");
+        if (!unlink($temp_file)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $temp_file");
+        }
+        if (!flock($file_lockd, LOCK_UN)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error unlocking $file_lock_name");
+        }
+        if (!fclose($file_lockd)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error closing $file_lock_name");
+        }
+        if (!unlink($file_lock_name)) {
+          syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $file_lock_name");
+        }
+        return false;
+      }
+      if (!flock($file_lockd, LOCK_UN)) {
+        syslog(LOG_ERR, "get_archive.php?id=$id: error unlocking $file_lock_name");
+      }
+      if (!fclose($file_lockd)) {
+        syslog(LOG_ERR, "get_archive.php?id=$id: error closing $file_lock_name");
+      }
+      if (!unlink($file_lock_name)) {
+        syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $file_lock_name");
+      }
+    }
+  }
+ 
+  $size_bytes = filesize($archive_loc);
+  if ($size_bytes === false || $size_bytes == 0) {
+    syslog(LOG_WARNING, "get_archive.php?id=$id: archive $archive_loc is empty?");
+    return false;
+  }
+  if (! ($fptr = fopen($archive_loc, "r"))) {
     syslog(LOG_ERR, "get_archive.php?id=$id: error opening $temp_file for reading (this should not happen)");
     if (!unlink($temp_file)) {
       syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $temp_file");
@@ -131,21 +214,28 @@ function try_with_location($temp_disk) {
 }
 
 
+$archive_file="$doc_root/archive/$id.tar.tgz";
+syslog(LOG_ERR, "get_archive2.php: $archive_file -> " . dirname($archive_file) );
+if (! is_dir(dirname($archive_file)) ){
+  if (!mkdir(dirname($archive_file), 0777, true)) {
+    syslog(LOG_ERR, "get_archive.php: error creating archive folder for $archive_file");
+  }
+}
 // We have two scratch spaces, one local at $doc_root/tmp.small, and one
 // remote at $doc_root/tmp.large.
 
 cleanup_location("$doc_root/tmp.small");
 
-if (try_with_location("$doc_root/tmp.small")) {
+if (try_with_location("$archive_file", "$doc_root/tmp.small")) {
   exit(0);
 }
 
 cleanup_location("$doc_root/tmp.large");
 
-if (try_with_location("$doc_root/tmp.large")) {
+if (try_with_location("$archive_file", "$doc_root/tmp.large")) {
   exit(0);
 }
-if (try_with_location("$doc_root/tmp.large")) {
+if (try_with_location("$archive_file", "$doc_root/tmp.large")) {
   exit(0);
 }
 // After two tries, we give up.
