@@ -192,10 +192,7 @@ function try_with_location($archive_loc, $temp_disk) {
     return false;
   }
   if (! ($fptr = fopen($archive_loc, "r"))) {
-    syslog(LOG_ERR, "get_archive.php?id=$id: error opening $temp_file for reading (this should not happen)");
-    if (!unlink($temp_file)) {
-      syslog(LOG_ERR, "get_archive.php?id=$id: error deleting $temp_file");
-    }
+    syslog(LOG_ERR, "get_archive.php?id=$id: error opening $archive_loc for reading (this should not happen)");
     return false;
   }
   header('Content-Type: application/octet-stream');
@@ -203,19 +200,19 @@ function try_with_location($archive_loc, $temp_disk) {
   header("Content-Length: $size_bytes");
 
   if (!fpassthru($fptr)) {
-    syslog(LOG_ERR, "get_archive.php?id=$id, error status returned from fpassthru, file is $temp_file");
+    syslog(LOG_ERR, "get_archive.php?id=$id, error status returned from fpassthru, file is $archive_loc");
     return false;
   }
   // It succeeded.
-  if (!fclose($fptr) || !unlink($temp_file)) {
-    syslog(LOG_ERR, "error closing or deleting $temp_file");
+  if (!fclose($fptr)) {
+    syslog(LOG_ERR, "error closing file $archive_loc");
   }
   return true;
 }
 
 
 $archive_file="$doc_root/archive/$id.tar.tgz";
-syslog(LOG_ERR, "get_archive2.php: $archive_file -> " . dirname($archive_file) );
+// syslog(LOG_ERR, "get_archive2.php: $archive_file -> " . dirname($archive_file) );
 if (! is_dir(dirname($archive_file)) ){
   if (!mkdir(dirname($archive_file), 0777, true)) {
     syslog(LOG_ERR, "get_archive.php: error creating archive folder for $archive_file");
