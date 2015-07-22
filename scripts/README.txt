@@ -12,4 +12,3 @@ sudo rm -rf ../downloads/submitted/9
 rm -r ../downloads/build_index/9
 rm -r ../downloads/build/9
 ./make_all.sh
-
