@@ -143,7 +143,7 @@ ksort($link_name_to_dest, SORT_STRING); // sort low to high on key [string]
     <div class="container">
       <div id="centeredContainer">
         <div id="headerBar">
-          <div id="headerLeft">  <image id="logoImage" src="/kaldi_text_and_logo.png"> </div>
+          <div id="headerLeft">  <a href="http://kaldi-asr.org"><image id="logoImage" src="/kaldi_text_and_logo.png"></a> </div>
           <div id="headerRight"> <image id="logoImage" src="/kaldi_logo.png">  </div>
         </div>
         <hr>
