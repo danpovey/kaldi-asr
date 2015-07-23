@@ -24,15 +24,16 @@ $BRANCH             = "master";
 
 // I had to change this from _POST['payload'] to  $_SERVER['HTTP_X_GITHUB_EVENT']
 // to make it work -- yenda
-if ( $_SERVER['HTTP_X_GITHUB_EVENT'] == 'ping' ) {
+if ( $_SERVER['HTTP_X_GITHUB_EVENT'] == 'push' ) {
   // Only respond to POST requests from Github
   
   if( file_exists($LOCAL_REPO) ) {
     
     // If there is already a repo, just run a git pull to grab the latest changes
-    shell_exec("cd {$LOCAL_REPO} && git pull", $retval);
+    $return = shell_exec("cd {$LOCAL_REPO} && git pull");
     header("Content-Type: text/plain");
     http_response_code(200);
+    print($return);
   } else {
     
     // If the repo does not exist, then clone it into the parent directory
@@ -41,6 +42,9 @@ if ( $_SERVER['HTTP_X_GITHUB_EVENT'] == 'ping' ) {
     header("Content-Type: text/plain");
     http_response_code(200);
   }
+} elseif (array_key_exists ('HTTP_X_GITHUB_EVENT', $_SERVER) ) {
+  header("Content-Type: text/plain");
+  http_response_code(202);
 } else {
   http_response_code(521);
   $output_including_status = shell_exec("cd {$LOCAL_REPO} && git status; git remote show origin; echo Exit status: $?");
