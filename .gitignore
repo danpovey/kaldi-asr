@@ -3,6 +3,7 @@
 \.[#]*
 /archive
 /data
+/doc
 /downloads
 /data_eg
 /loopback_file
