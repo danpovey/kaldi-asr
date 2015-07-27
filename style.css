@@ -5,8 +5,12 @@ line-height: 1.3em;
 background-color: #FFFFFF;
 color:#5C3200;
 }
+
 a:link{ color:#3355EE; }
 a:visited { color:#3355EE; }
+h3,h4 {
+margin: 0.2em 0 0.3em 0;
+}
 h2.kaldiStyle {
 font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
 /*text-shadow: 1.5px 1.5px #AB8F72;*/
@@ -15,6 +19,14 @@ h3.kaldiStyle {
 font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
 /*text-shadow: 1.5px 1.5px #AB8F72;*/
 }
+*.content {
+/* font-family: "Courier New", Courier, monospace;*/
+ font-style: italic;
+}
+*.boxed {
+  margin: 0.1em 1.2em 0.2em 1.5em
+}
+
 #headerBar{ 
 height:60px;
 width:auto;

@@ -1,12 +1,12 @@
 a,h1,h2,h3,h4,body,html,div,textarea,input,hr{
-font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+font-family: Calibri,Arial,Sans Serif;
+/*font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;*/
 /*font-weight:bold;*/
-/*font-family: Calibri,Arial,Sans Serif;*/
 line-height: 1.3em;
 /*background-color: #FAEAE4;*/
 background-color: #FFFFFF;
-/*color:#5C3200;*/
-color:#000000;
+color:#5C3200;
+/*color:#000000;*/
 transition-delay:0;
 }
 
@@ -15,12 +15,21 @@ a:visited { color:#3355EE; }
 h3,h4 {
 margin: 0.2em 0 0.3em 0;
 }
+h2.kaldiStyle {
+font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+/*text-shadow: 1.5px 1.5px #AB8F72;*/
+}
+h3.kaldiStyle {
+font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+/*text-shadow: 1.5px 1.5px #AB8F72;*/
+}
 *.content {
 /* font-family: "Courier New", Courier, monospace;*/
  font-style: italic;
 }
 *.boxed {
-  margin: 0.1em 1.2em 0.2em 1.5em
+  margin: 0.1em 1.2em 0.2em 1.5em;
+  color:#000000;
 }
 
 #headerBar{ 
