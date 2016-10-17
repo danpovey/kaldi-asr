@@ -1,0 +1,14 @@
+We store model files in Google Cloud Storage.
+
+You can upload files to Cloud Storage either through the Google Cloud
+Console (https://console.cloud.google.com/storage) or the gcloud
+command line utility.
+
+To use gcloud, download and install the latest Google Cloud SDK
+(https://cloud.google.com/sdk/docs)
+
+Then use the following command to upload your model file into
+Cloud Storage:
+
+gsutil cp my-model.tar.gz gs://kaldi-asr/models/my-model.tar.gz
+
