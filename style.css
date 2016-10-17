@@ -149,7 +149,7 @@ p.resource {
 }
 
 .model-intro {
-    margin-bottom: 3em;
+    margin-bottom: 1em;
 }
 .model {
 	overflow: auto;
@@ -181,7 +181,7 @@ p.resource {
 }
 .model dt,
 .model dd {
-    margin-bottom: 0.9em;
+    margin-bottom: 0.2em;
 }
 .model > p {
 	margin-bottom: 2em;
@@ -192,6 +192,8 @@ p.resource {
 	width: 150px;
 	margin: 0 20px;
 	float: left;
+    padding-left: 30px;
+    background: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22512%22%20height%3D%22512%22%20viewBox%3D%220%200%20433.5%20433.5%22%3E%3Cpath%20d%3D%22M395.25%20153h-102V0h-153v153h-102l178.5%20178.5L395.25%20153zm-357%20229.5v51h357v-51h-357z%22%20fill%3D%22%235c3200%22%2F%3E%3C%2Fsvg%3E') 0 5px / 30px 30px no-repeat;
 }
 .dl-bar > a {
 	display: inline-block;
