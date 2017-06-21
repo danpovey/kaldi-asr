@@ -5,8 +5,8 @@ if [ $(id -u) != 0 ]; then
   exit 1
 fi
 
-if ! mount | grep kaldi-asr-data; then
-  echo You need to mount /mnt/kaldi-asr-data before calling this script
+if ! mount | grep web-data; then
+  echo You need to mount /mnt/web-data before calling this script
   exit 1
 fi
 

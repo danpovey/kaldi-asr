@@ -3,6 +3,7 @@ h1,
 h2,
 h3,
 h4,
+h5,
 body,
 html,
 div,
@@ -25,6 +26,21 @@ h3,
 h4 {
     margin: 0.2em 0 0.3em 0;
 }
+h5.kaldiStyle {
+    margin: 0.1em 0 0.2em 0;
+}
+
+h4.tutorialStyle {
+    margin: 1em 0 0.2em 0;
+}
+h5.tutorialStyle {
+    margin: 0.3em 0 0.3em 0;
+}
+pre.tutorialStyle {
+    margin: 0.2em 0.0em 0.2em 2.5em;
+    white-space: pre-line;
+}
+
 h2.kaldiStyle {
     font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
 }
@@ -56,7 +72,8 @@ h3.kaldiStyle {
     float: right;
     white-space: nowrap;
 }
-#logoImage {
+#logoImage,
+#smallLogoImage {
     height: 60px;
     margin: 0px 0 0 10px
 }

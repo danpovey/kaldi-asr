@@ -3,7 +3,7 @@
 use Getopt::Long;
 binmode(STDIN);
 
-my $submission_root = "/mnt/kaldi-asr-data/submitted";
+my $submission_root = "/mnt/web-data/kaldi-asr-data/submitted";
 # my $submission_root = "/Users/danielpovey/temp_data";
 
 my $block_size = 65536;   # affects memory usage, and how many hash marks are printed.
