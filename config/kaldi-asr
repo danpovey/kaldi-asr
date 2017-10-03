@@ -6,7 +6,7 @@
 
 	DocumentRoot /var/www/kaldi-asr
 	<Directory /mnt/kaldi-asr-data>
-         #was: Options FollowSymLinks Indexes
+                # Options FollowSymLinks
 		AllowOverride None
 	</Directory>
 	<Directory /var/www/kaldi-asr>
