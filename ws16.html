@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="description" content="Kaldi ASR Tutorial for the Third Frederick Jelinek Memorial Summer Workshop Participants"/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="/style.css"/> 
+    <title>Kaldi ASR Tutorial for the Third Frederick Jelinek Memorial Summer Workshop Participants</title>
+    
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft">  <a href="http://kaldi-asr.org"><image id="logoImage" src="/kaldi_text_and_logo.png"></a> </div>
+         <div id="headerRight"> <image id="logoImage" src="/kaldi_logo.png">  </div>
+          <!--   <h2 class="kaldiStyle"> Kaldi </h2> -->
+       
+        </div>
+        <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/doc/">Documentation</a>
+          <a class="myTopButton" href="/forums.html">Help!</a>
+          <a class="topButtons" href="/models.html">Models</a>
+	</div>
+        <hr>
+
+        <div id="rightCol">
+          <div class = "contact_info">
+            <div class="contactTitle">Team</div>
+            Sanjeev Khudanpur<br/>
+            Jan "Yenda" Trmal<br/>
+            Vijayaditya Peddinti<br/>
+          </div>
+        </div>
+        
+
+        <div id="mainContent">
+
+          <div class= "container" >
+	          <h3 class="kaldiStyle">BUILDING SPEECH RECOGNITION SYSTEMS WITH THE KALDI  TOOLKIT</h3>
+	          <h4 class="kaldiStyle">Information for participants</h4>
+The current version of the <a href="ws16-data/2016-06-WS16-2.pdf">tutorial slides</a>. <b>Updated on 2016-06-13</b>.
+	          <h4 class="kaldiStyle">Logging onto a machine</h4>
+Using the provided SSH <a href="ws16-data/ws16-public.pem.txt">private key</a>, login on a assigned machine.
+Using the command line SSH (linux/macosX), this can be done using the following command:
+<pre>
+ssh -i ws16-public.pem.txt ubuntu@&lt;machine-name&gt;
+</pre>
+where <tt>&lt;machine-name&gt;</tt> is the address of the machine with the same number you've been assigned.
+Please note that after downloading, you might need to change the access rights to the file <tt>ws16-public.pem.txt</tt>
+to allow only the current user to read the file (it's a security precaution built-in into OpenSSH clients).
+This can be done using the following command
+<pre>
+chmod 600 ws16-public.pem.txt
+</pre>
+
+	          <h4 class="kaldiStyle">Running the recipe</h4>
+Once you've log in, run the command <tt>screen</tt>. That command ensures that even if the connection to the machine is dropped, the scripts will still keep running, so you won't have to run everything from scratch.
+<p/> The recipe is in <tt>~/kaldi/egs/iban/s5</tt>. Everything should be set up correctly for you, so that you can go ahead and run the script <tt>run.sh</tt>. We will use <tt>tee</tt> to keep the console output in the log file for a future reference.
+<pre>
+~/kaldi/egs/iban/s5 $ ./run.sh 2>&1 | tee run.log
+</pre>
+
+It will take a two or three hours to finish.
+After the script finishes, you can run another script, providing training procedure for TDNN acoustic models. That script is <tt>./local/nnet3/run_tdnn.sh</tt>.
+It is inteded to be run from the same directory in which the script <tt>run.sh</tt> lies, i.e. should be executed as
+<pre>
+~/kaldi/egs/iban/s5 $ ./local/nnet3/run_tdnn.sh 2>&1 | tee run-tdnn.log
+</pre>
+
+
+	          <h4 class="kaldiStyle">List of machines</h4>
+The list of machine is published <a href="https://docs.google.com/spreadsheets/d/1VQOOIyiPk9xytLeuzUJF6uAjZMsk6ex947rdd-i4b8c/edit?usp=sharing">this google doc spreadsheet</a>. <emph>Reserve</emph> your machine by typing your name (or your team's name) in the first column in the spreadsheet.
+To choose a machine to log in, choose the one with an empty field in the first column.
+
+
+          </div>  
+        </div>
+      </div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+      <div style="clear: both"></div>
+
+      <div id="footer"> 
+        <p>
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+	        <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+                 alt="Valid CSS!" />
+	      </a>
+        </p>
+      </div>
+    </div>
+  </body>      
+</html>
+

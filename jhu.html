@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="description" content="Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting"/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="style.css?version=3.5"/> 
+    <title>Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting</title>
+    <style>
+	emph {
+		font-style: italic;
+	}
+    </style> 
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft"> <a href="http://kaldi-asr.org"><img alt="" id="logoImage" src="/kaldi_text_and_logo.png"></a></div>
+         <div id="headerRight"> <img alt="" id="smallLogoImage" src="/kaldi_logo.png">  </div>
+          <!--   <h2 class="kaldiStyle"> Kaldi </h2> -->
+       
+        </div>
+        <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/doc/">Documentation</a>
+          <a class="myTopButton" href="/forums.html">Help!</a>
+          <a class="topButtons" href="/models.html">Models</a>
+	</div>
+        <hr>
+
+        <div id="rightCol">
+          <div class = "contact_info">
+            <div class="contactTitle">Tutorial Team</div>
+            Sanjeev Khudanpur<br/>
+	    Dan Povey<br/>
+            Jan "Yenda" Trmal<br/>
+          </div>
+        </div>
+        
+
+        <div id="mainContent">
+
+          <div class= "container" >
+	  	<h3 class="kaldiStyle tutorialStyle">BUILDING SPEECH RECOGNITION SYSTEMS WITH THE KALDI TOOLKIT</h3>
+		
+			<h4 class="kaldiStyle tutorialStyle">Information for participants</h4>
+				The current version of the <a href="downloads/tutorial-materials/ibt-data/BABEL_TT_Tutorial_Khudanpur.pdf">tutorial slides</a>. <b>Updated on 2017-02-16</b>.
+
+			<h4 class="kaldiStyle tutorialStyle">Information for participants</h4>
+			We do really assume you have basic experience with linux and bash command line. We also assume you are familiar with the CLSP Wiki.
+			If you are not sure, please go to the <a href="http://wiki.clsp.jhu.edu/view/Introduction_to_the_CLSP_Grid">CLSP Wiki</a> to remind yourself 
+			about the rules and suggestions.
+
+			<h4 class="kaldiStyle tutorialStyle">Preliminary: Logging onto a machine</h4>
+				<h5 class="kaldiStyle tutorialStyle">GNU&nbsp;Linux, Unix, MacOS&nbsp;X</h5>
+					Using your CLSP account, log onto the login node.
+					Using the command line SSH, this can be done using the following command:
+					
+					<pre class="kaldiStyle tutorialStyle">
+					ssh &lt;user-name&gt;@login.clsp.jhu.edu
+					</pre>
+					
+					where <samp>&lt;user-name&gt;</samp> is your username you've been assigned when applying for the account.
+		
+				<h5 class="kaldiStyle tutorialStyle">MS&nbsp;Windows</h5>
+					For MS&nbsp;Windows, no SSH client is comming as a standard part of the OS. We suggest to install 
+					<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">PuTTY</a>.<p>
+			
+				<h5 class="kaldiStyle tutorialStyle">Testing the SSH</h5>
+					We do not generally recommend using the login node for any real work. Instead, after loging onto the login machine,
+					log on a random compute node 
+					<pre class="kaldiStyle tutorialStyle">
+					ssh b0$((${RANDOM}%8+1))
+					</pre>
+					The randomness is here just to distribute the participants evenly across several nodes. Please remember the name of the node you will log on and use it for any consequential logs (for example if your connection drops, if you need to log from another computer and so on).
+					If you aleady have you favorite compute node you've been already working on, you can keep using that.
+
+			<h4 class="kaldiStyle tutorialStyle">Running the recipe: setup</h4>
+				Once you've log in, run the command <samp>screen</samp>. That command ensures that even if the connection to the machine is dropped, 
+				the scripts will still keep running, so you won't have to run everything from scratch.
+				<p>
+				In case you need to restore the connection (for example after a lunch break), use the command <code>screen -ls</code> to see the already opened sessions.
+				Use the session name (looking something like <code>2101.pts-0.ip-10-37-174-80</code> as a parameter of <code>screen -rd</code> to connect to that session.
+				See the following example. Your session name can look different! Also, it is possible to see two (or even more) sessions, especially in case you were working
+				in pairs (but each on their own computer). You can guess which is the right by looking at the date of the session and it's state. You want to primarily consider
+				the sessions that are in "Dettached" state.
+				<pre style="color:gray;margin-left:2em;">
+ubuntu@ip-10-37-174-80:~$ screen -ls
+There is a screen on:
+2101.pts-0.ip-10-37-174-80(02/15/2017 05:28:36 PM)(Attached)
+1 Socket in /var/run/screen/S-ubuntu.
+
+ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
+				</pre> 
+				<p>
+				
+				<h5 class="kaldiStyle tutorialStyle">If you have your kaldi installed</h5>
+				I will assume your kaldi is relatively recent. The IBAN is a part of the standard kaldi pipeline. You can find it in <samp>egs/iban/s5</samp>.
+				You will have to do some modifications:
+				<pre class="kaldiStyle tutorialStyle">
+				$ sed -i'' 's/run.pl/queue.pl/g' cmd.sh
+				$ ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
+				$ ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				</pre>
+				Be sure you are not storing data nor running the recipe from your home directory -- use one of the <samp>/export/&lt;something&gt;</samp> directories to run the recipe (in the same way as you run -- or should run -- the kaldi recipes on the CLSP grid).
+				
+				<p>
+
+				<h5 class="kaldiStyle tutorialStyle">If you _dont_ have your kaldi installed</h5>
+				First of all, to make things clear: you really should have your own kaldi ready! This is just an emergency solution.
+				After logging in, create a directory <samp>/export/&lt;your-machine&gt;/&lt;your-username&gt;/iban</samp>
+				To give you an example, the path will look like this <samp>/export/b03/jtrmal/iban</samp>.
+				Change your working directory into this directory and perform these commands:
+				<pre class="kaldiStyle tutorialStyle">
+				mkdir -p /export/&lt;your-machine&gt;/&lt;your-username&gt;/iban
+				cd /export/&lt;your-machine&gt;/&lt;your-username&gt;/iban
+				cp -R /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/{conf,local,path.sh,cmd.sh,run.sh}  .
+				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/{steps,utils} .
+				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
+				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				
+				sed -i'' 's/run.pl/queue.pl/g' cmd.sh
+				sed -i'' 's:KALDI_ROOT=.*:KALDI_ROOT=/export/a09/jtrmal/kaldi-clean-git/:g' path.sh
+				</pre>
+				If you hesitate, if you don't know something, if you have doubts, just ask us! Do not guess!
+
+				<h4 class="kaldiStyle tutorialStyle">Running the recipe: next steps</h5>
+				First, please make sure you are not running the recipe from your home directory. Your working directory should be starting with <samp>/export/</samp>. If not sure, please ask us. This is absolutely essential!
+				<p> 
+				We will use <samp>tee</samp> to keep the console output in the log file for a future reference.
+				
+				<pre class="kaldiStyle tutorialStyle">
+				$ ./run.sh 2>&1 | tee run.log
+				</pre>
+
+				It will take a two or three hours to finish.
+				After the script finishes, you can run another script, providing training procedure for TDNN acoustic models. 
+				That script is <samp>./local/nnet3/run_tdnn.sh</samp>. It is inteded to be run from the same directory in which 
+				the script <samp>run.sh</samp> lies, i.e. should be executed as
+				
+				<pre class="kaldiStyle tutorialStyle">
+				~/kaldi/egs/iban/s5 $ ./local/nnet3/run_tdnn.sh 2>&1 | tee run-tdnn.log
+				</pre>
+
+
+
+          </div>  
+        </div>
+      </div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+      <div style="clear: both"></div>
+
+      <div id="footer"> 
+        <p>
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+	        <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+                 alt="Valid CSS!" />
+	      </a>
+        </p>
+      </div>
+    </div>
+  </body>      
+</html>
+

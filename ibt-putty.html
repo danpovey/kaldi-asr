@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="description" content="Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting"/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="style.css?version=3.7"/> 
+    <title>Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting</title>
+    <style>
+	emph {
+	    font-style: italic;
+	}
+
+	#mainContent {
+	    padding-right: 250px;
+	    padding-left: 10px;
+	    padding-top: 0.5em;
+	    min-width: 400px;
+	    max-width: none; 
+	    padding-bottom: 3em;
+	}
+
+	.commented-image  {
+	    margin: 1em 1em;
+	    margin-bottom: 3em;
+	}
+	
+	.commented-image:after {
+	    content:'';
+	    display:block;
+	    clear: both;
+	}
+
+	.commented-image img {
+	    float: left;
+	    width: 450px;
+	    margin-right: 1.5em;
+	}
+
+	.commented-image p {
+	    overflow: hidden;
+	}
+	.commented-image p:last-child {
+	    overflow: visible;
+	}
+
+	ol {
+		display: table; 	
+	}
+
+	li {
+		margin-left: 1em;
+	}
+
+   </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft"> <a href="http://kaldi-asr.org"><img alt="" id="logoImage" src="/kaldi_text_and_logo.png"></a></div>
+         <div id="headerRight"> <img alt="" id="smallLogoImage" src="/kaldi_logo.png">  </div>
+          <!--   <h2 class="kaldiStyle"> Kaldi </h2> -->
+       
+        </div>
+        <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/doc/">Documentation</a>
+          <a class="myTopButton" href="/forums.html">Help!</a>
+          <a class="topButtons" href="/models.html">Models</a>
+	</div>
+        <hr>
+
+        <div id="rightCol">
+          <div class = "contact_info">
+            <div class="contactTitle">Tutorial Team</div>
+            Sanjeev Khudanpur<br/>
+	    Dan Povey<br/>
+            Jan "Yenda" Trmal<br/>
+            Matthew Wiesner<br/>
+          </div>
+        </div>
+        
+
+        <div id="mainContent">
+
+          <div class= "container" >
+	  	<h3 class="kaldiStyle tutorialStyle">BUILDING SPEECH RECOGNITION SYSTEMS WITH THE KALDI TOOLKIT</h3>
+		
+			<h4 class="kaldiStyle tutorialStyle">Putty setup instruction</h4>
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-1.png">
+					<p> 
+					<ul>
+						<li> If putty is not installed on your computer, go to 
+					the <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html">download page</a>
+					and download the file <samp>putty.exe</samp>. You won't need the other
+                                        programs. </li>
+						<li> Run <samp>putty.exe</samp>
+					        </li>
+					</ul>
+					 </p>
+				</div>
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-0.png">
+					<p> You should be seeing a application windows looking like
+                                           the one on the screenshot </p>
+				</div>
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-2.png">
+					<p> 
+					<ol>
+						<li> Choose the category <emph>Connection/Data</emph> </li>
+						<li> Fill-out the <emph>Auto-login username</emph> field. 
+							Use <emph>ubuntu</emph> as the username </li>	
+					</ol>
+					</p>
+				</div>
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-3.png">
+					<p> 
+					<ol>
+						<li>Choose the category <emph>Connection/SSH/Auth</emph></li>
+						<li>Use the <emph>Browse</emph> button to select path to downloaded private key <samp>ibt-public.ppk</samp>
+						    You can download the key <a href="/downloads/tutorial-materials/ibt-data/ibt-public.ppk" download>here</a>.
+						</li>
+					</ol>
+					</p>
+				</div>
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-4.png">
+					<p> 
+					<ol>
+						<li>Click back on the category <emph>Connection</emph> </li>
+						<li>Fill-out the <emph>Host Name (or IP address)</emph> field. 
+							Use the machine name you've been assigned.
+						</li>
+						<div style="margin-top: 0.5em;margin-bottom: 0.5em;">
+						<ol start=3>
+							<div><i>Optional:</i>. Just to save you some time in case you will have to reconnect.</div>
+							<li> Fill-out a name of the session. You can use something easy to remember
+								or just the same name machine name as you've used above</li>
+							<li> Click Save </li>
+						</ol>
+						</div>
+						<li value=5> Click <emph>Open</emph> button.</li>
+					</ol>
+					</p>
+				</div>
+			
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-6a.png">
+					<p> 
+					<ol>
+						<li> You will probably get asked if you trust the remote machine. Click Yes.
+						</li>
+					</ol>
+					</p>
+				</div>
+
+				<div class="commented-image">
+					<img src="downloads/tutorial-materials/ibt-data/putty-7.png">
+					<p> 
+					<ol>
+						<li> Your screen should look similarly to his one. 
+						</li>
+					</ol>
+					Congratulations, your PuTTY works!
+					</p>
+				</div>
+          </div>  
+        </div>
+      </div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+      <div style="clear: both"></div>
+
+      <div id="footer"> 
+        <p>
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+	        <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+                 alt="Valid CSS!" />
+	      </a>
+        </p>
+      </div>
+    </div>
+  </body>      
+</html>
+

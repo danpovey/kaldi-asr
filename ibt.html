@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="description" content="Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting"/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/kaldi_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="style.css?version=3.5"/> 
+    <title>Kaldi ASR Tutorial for IARPA Babel final system delivery and government transition meeting</title>
+    <style>
+	emph {
+		font-style: italic;
+	}
+    </style> 
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft"> <a href="http://kaldi-asr.org"><img alt="" id="logoImage" src="/kaldi_text_and_logo.png"></a></div>
+         <div id="headerRight"> <img alt="" id="smallLogoImage" src="/kaldi_logo.png">  </div>
+          <!--   <h2 class="kaldiStyle"> Kaldi </h2> -->
+       
+        </div>
+        <hr>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/doc/">Documentation</a>
+          <a class="myTopButton" href="/forums.html">Help!</a>
+          <a class="topButtons" href="/models.html">Models</a>
+	</div>
+        <hr>
+
+        <div id="rightCol">
+          <div class = "contact_info">
+            <div class="contactTitle">Tutorial Team</div>
+            Sanjeev Khudanpur<br/>
+	    Dan Povey<br/>
+            Jan "Yenda" Trmal<br/>
+            Matthew Wiesner<br/>
+          </div>
+        </div>
+        
+
+        <div id="mainContent">
+
+          <div class= "container" >
+	  	<h3 class="kaldiStyle tutorialStyle">BUILDING SPEECH RECOGNITION SYSTEMS WITH THE KALDI TOOLKIT</h3>
+		
+			<h4 class="kaldiStyle tutorialStyle">Information for participants</h4>
+				The current version of the <a href="downloads/tutorial-materials/ibt-data/BABEL_TT_Tutorial_Khudanpur.pdf">tutorial slides</a>. <b>Updated on 2017-02-16</b>.
+			
+			<h4 class="kaldiStyle tutorialStyle">Preliminary: Logging onto a machine</h4>
+				<h5 class="kaldiStyle tutorialStyle">GNU&nbsp;Linux, Unix, MacOS&nbsp;X</h5>
+					Using the provided SSH <a href="/downloads/tutorial-materials/ibt-data/ibt-public.pem.txt" download>private key</a>, login on an assigned machine.
+					Using the command line SSH, this can be done using the following command:
+					
+					<pre class="kaldiStyle tutorialStyle">
+					ssh -i ibt-public.pem.txt ubuntu@&lt;machine-name&gt;
+					</pre>
+					
+					where <samp>&lt;machine-name&gt;</samp> is the address of the machine with the same number you've been assigned.
+					Please note that after downloading, you might need to change the access rights to the file <samp>ibt-public.pem.txt</samp>
+					to allow only the current user to read the file (it's a security precaution built-in into OpenSSH clients).
+					This can be done using the following command
+		
+					<pre class="kaldiStyle tutorialStyle">
+					chmod 600 ibt-public.pem.txt
+					</pre>
+		
+				<h5 class="kaldiStyle tutorialStyle">MS&nbsp;Windows</h5>
+					For MS&nbsp;Windows, no SSH client is comming as a standard part of the OS. We suggest to install 
+					<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">PuTTY</a>. We provide additional information
+					about PuTTY setup <a href="ibt-putty.html">here</a>. Please note that PuTTY needs the private key
+					in a special format. You can download the key <a href="/downloads/tutorial-materials/ibt-data/ibt-public.ppk" download>here</a>.
+
+				<h5 class="kaldiStyle tutorialStyle">Testing the SSH</h5>
+					You can use the machine name <samp>ec2-54-204-202-208.compute-1.amazonaws.com</samp> to login in order to verify your setup works.
+					That machine is solely for the purpose of testing the connection procedure, it does not have enough CPUs nor memory to be 
+					usable for running the scripts.
+
+			<h4 class="kaldiStyle tutorialStyle">Running the recipe</h4>
+				Once you've log in, run the command <samp>screen</samp>. That command ensures that even if the connection to the machine is dropped, 
+				the scripts will still keep running, so you won't have to run everything from scratch.
+				<p>
+				In case you need to restore the connection (for example after a lunch break), use the command <code>screen -ls</code> to see the already opened sessions.
+				Use the session name (looking something like <code>2101.pts-0.ip-10-37-174-80</code> as a parameter of <code>screen -rd</code> to connect to that session.
+				See the following example. Your session name can look different! Also, it is possible to see two (or even more) sessions, especially in case you were working
+				in pairs (but each on their own computer). You can guess which is the right by looking at the date of the session and it's state. You want to primarily consider
+				the sessions that are in "Dettached" state.
+				<pre style="color:gray;margin-left:2em;">
+ubuntu@ip-10-37-174-80:~$ screen -ls
+There is a screen on:
+2101.pts-0.ip-10-37-174-80(02/15/2017 05:28:36 PM)(Attached)
+1 Socket in /var/run/screen/S-ubuntu.
+
+ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
+				</pre> 
+				<p>
+				The recipe is in <samp>~/kaldi/egs/iban/s5</samp>. Everything should be set up correctly for you, so that you can go 
+				ahead and run the script <samp>run.sh</samp>. We will use <samp>tee</samp> to keep the console output in the log file for a future reference.
+				
+				<pre class="kaldiStyle tutorialStyle">
+				~/kaldi/egs/iban/s5 $ ./run.sh 2>&1 | tee run.log
+				</pre>
+
+				It will take a two or three hours to finish.
+				After the script finishes, you can run another script, providing training procedure for TDNN acoustic models. 
+				That script is <samp>./local/nnet3/run_tdnn.sh</samp>. It is inteded to be run from the same directory in which 
+				the script <samp>run.sh</samp> lies, i.e. should be executed as
+				
+				<pre class="kaldiStyle tutorialStyle">
+				~/kaldi/egs/iban/s5 $ ./local/nnet3/run_tdnn.sh 2>&1 | tee run-tdnn.log
+				</pre>
+
+
+			  <h4 class="kaldiStyle tutorialStyle">List of machines</h4>
+				<!-- For now, we do not provide any publicly available machines (except the testing one mentioned above that should be used only to verify your SSH client works).
+				The tutorial participants will be provided with an access to a machine during the course of the workshop. -->
+
+				The machines are no longer available. You can use the machine <samp>ec2-54-204-202-208.compute-1.amazonaws.com</samp> to look at the files and sniff around. 
+				Do not run the scripts, please. The machine does not have enough memory (nor cpus) to do anything else than just host the fully trained system.
+				
+<!--The following <a href="https://docs.google.com/spreadsheets/d/1ZgRtPKg-y-JHREyBcianPtaqTclpRKmzPtEbUBE8yig/edit?usp=sharing">spreadsheat</a> contains a list of machines available for public use.
+Choose one that is not used yet (the field Team/Name is empty) and write your 
+name/nick/team name into the given field. -->
+
+				<p>
+				The Iban recipe is a part of the Kaldi standard egs. The data are publicly available (see <a href="http://www.openslr.org/24/">http://www.openslr.org/24/</a>). 
+				You can train the system using your own local machine/cluster. For the basic HMM/GMM/SGMM systems you don't need a machine with GPUs!
+				<p>
+				If you have (or your institution has) access to the AWS (Amazon Web Services) cloud, you can run an instance with exactly the same setup 
+				you will have access to during the tutorial. This might come useful even after tutorial ends and the tutorial machines won't be available.
+				We have published two AWS (Amazon Web Services) AMI images "v4 IBAN recipe/Ubuntu 14.04LTS" (<samp>AMI-ID ami-7b688916</samp>) 
+				and "v5 IBAN recipe/Ubuntu 14.04LTS" (<samp>AMI-ID ami-6945a804</samp>). The difference between the two is that "v4" has a complete setup, 
+				but does not contain the files created during training. The "v5" contains fully trained and decoded system.
+
+          </div>  
+        </div>
+      </div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+      <div style="clear: both"></div>
+
+      <div id="footer"> 
+        <p>
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+	        <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+                 alt="Valid CSS!" />
+	      </a>
+        </p>
+      </div>
+    </div>
+  </body>      
+</html>
+
