@@ -67,7 +67,7 @@
                 <div class="note">Trained on Fisher</div>
               </dd>
               <dt>Kaldi Version</dt><dd>503e5d</dd>
-              <dt>Model Type</dt><dd>Chain, LSTM, BLSTM</dd>
+              <dt>Model Type</dt><dd>Chain (TDNN and BLSTM)</dd>
 
               <dt>WER</dt><dd>15.60%<div class="note">On eval2000 (entire test set, not just Switchboard subset)</div></dd>
 
@@ -117,6 +117,25 @@ class="dl-link">Download <ASIDE>(3.4G)</ASIDE></SPAN></A>             </DIV>
             <a href="https://david-ryan-snyder.github.io/2017/10/04/model_sre16_v2.html" target="_blank">Notes on the model and training data used</a>
           </div></dd>
         </dl>
+
+
+        <h2>ASpIRE SAD Model</h2>
+        <div class="dl-bar"><a href="models/0004_tdnn_stats_asr_sad_1a.tar.gz"><span class="dl-link">Download <aside>(14M)</aside></span></a></div>
+        <dl>
+          <dt>Date</dt>
+          <dd>2018-04-26</dd>
+          <dt>Uploader</dt>
+          <dd><a href="mailto:vimal.manohar91@gmail.com" target="_blank">Vimal Manohar</a></dd>
+          <dt>Recipe</dt>
+          <dd>
+            <a target="_blank" href="https://github.com/kaldi-asr/kaldi/tree/master/egs/aspire/s5/local/run_asr_segmentation.sh">egs/aspire/s5</a>
+          </dd>
+          <dt>Kaldi Version</dt>
+          <dd><a href="https://github.com/kaldi-asr/kaldi/commit/8ff7fd9f84e89a652716956d8989e9205d7bf52f" target="_blank">8ff7fd9</a></dd>
+          <dt>Model Type</dt>
+          <dd>Speech Activity Detection (SAD), TDNN + Stats pooling</dd>
+        </dl>
+
         </div>
       </div>
 
