@@ -95,6 +95,16 @@ h3.kaldiStyle {
 
     padding-bottom: 3em;
 }
+#modelList {
+    padding-right: 250px;
+    padding-left: 10px;
+
+    padding-top: 0.5em;
+    min-width: 400px;
+    max-width: 1000px;
+
+    padding-bottom: 3em;
+}
 #rightCol {
     float: right;
     width: 230px;
