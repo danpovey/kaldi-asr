@@ -96,7 +96,7 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 				</pre> 
 				<p>
 				
-				<h5 class="kaldiStyle tutorialStyle">If you have your kaldi installed</h5>
+				<h5 class="kaldiStyle tutorialStyle">If you have kaldi installed</h5>
 				I will assume your kaldi is relatively recent. The IBAN is a part of the standard kaldi pipeline. You can find it in <samp>egs/iban/s5</samp>.
 				You will have to do some modifications:
 				<pre class="kaldiStyle tutorialStyle">
@@ -108,8 +108,9 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 				
 				<p>
 
-				<h5 class="kaldiStyle tutorialStyle">If you _dont_ have your kaldi installed</h5>
-				First of all, to make things clear: you really should have your own kaldi ready! This is just an emergency solution.
+				<h5 class="kaldiStyle tutorialStyle">If you _dont_ have kaldi installed (option 1)</h5>
+				First of all, to make things clear: you really should have your own kaldi ready!
+			        This is just an emergency solution if you don't have time to wait for kaldi to compile.
 				After logging in, create a directory <samp>/export/&lt;your-machine&gt;/&lt;your-username&gt;/iban</samp>
 				To give you an example, the path will look like this <samp>/export/b03/jtrmal/iban</samp>.
 				Change your working directory into this directory and perform these commands:
@@ -125,6 +126,35 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 				sed -i'' 's:KALDI_ROOT=.*:KALDI_ROOT=/export/a09/jtrmal/kaldi-clean-git/:g' path.sh
 				</pre>
 				If you hesitate, if you don't know something, if you have doubts, just ask us! Do not guess!
+				</p>
+				
+				<p>
+				<h5 class="kaldiStyle tutorialStyle">If you _dont_ have kaldi installed (option 2)</h5>
+				Follow this section to install kaldi from scratch.  If you don't have time to wait, follow option 1.
+				After logging in, create the directory <samp>/export/&lt;your-machine&gt;/&lt;your-username&gt;</samp>
+				if it doesn't already exist.
+				To give you an example, the path will look like this <samp>/export/b03/jtrmal</samp>.
+				Change your working directory into this directory and perform these commands:
+				<pre class="kaldiStyle tutorialStyle">
+				mkdir -p /export/&lt;your-machine&gt;/&lt;your-username&gt;
+				cd /export/&lt;your-machine&gt;/&lt;your-username&gt;
+                                git clone https://github.com/kaldi-asr/kaldi.git iban
+
+                                cd iban/tools
+                                make -j 16
+                                ln -s /export/a09/jtrmal/kaldi-clean-git/tools/srilm
+                                source env.sh
+
+                                cd ../src
+                                ./configure --shared
+                                make depend -j 16
+                                make -j 16
+
+                                cd ../egs/iban/s5
+				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
+				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				</pre>
+				</p>
 
 				<h4 class="kaldiStyle tutorialStyle">Running the recipe: next steps</h5>
 				First, please make sure you are not running the recipe from your home directory. Your working directory should be starting with <samp>/export/</samp>. If not sure, please ask us. This is absolutely essential!
