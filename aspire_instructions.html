@@ -1,0 +1,62 @@
+<h2 id="download-the-pre-trained-kaldi-tdnn-chain-model">Download the pre-trained kaldi TDNN chain model</h2>
+<pre><code>cd egs/aspire/s5
+wget http://kaldi-asr.org/models/1/0001_aspire_chain_model.tar.gz
+tar xzvf 0001_aspire_chain_model.tar.gz</code></pre>
+<p>The directories required are:</p>
+<pre><code>exp/chain/tdnn_7b     # chain model
+exp/nnet3/extractor   # i-vector extractor
+data/lang_pp_test     # 3-gram LM lang directory</code></pre>
+<h2 id="prepare-eval2000-data-directory">Prepare eval2000 data directory</h2>
+<p>Create a new data directory <code>data/eval2000</code> with the following files: <code>wav.scp, reco2file_and_channel, segments, utt2spk, spk2utt</code>. The instructions are as follows:</p>
+<ol type="1">
+<li><p>The audio files are in NIST sphere format (<code>*.sph</code>) files in <code>/export/corpora2/LDC/LDC2002S09/hub5e_00/english</code><br />
+The two sides of the conversation are in separate channels and can be extracted on the fly by adding the following lines in <code>wav.scp</code>:</p>
+<pre><code> &lt;file-id&gt;-A sph2pipe -f wav -p -c 1 &lt;filename&gt; |
+ &lt;file-id&gt;-B sph2pipe -f wav -p -c 2 &lt;filename&gt; |</code></pre>
+<p>where <code>&lt;file-id&gt;</code> is an arbitrary unique id for the file (usually the basename)</p>
+<pre><code> Also create a file `reco2file_and_channel`, which has a mapping from the
+ recording (one side of conversation) to the file and channel.
+
+ &lt;file-id&gt;-&lt;A|B&gt; &lt;file-id&gt; &lt;A|B&gt;</code></pre></li>
+<li><p>The segment information is in the PEM file <code>/export/corpora2/LDC/LDC2002S09/hub5e_00/english/hub5e_00.pem</code> in the format:</p>
+<pre><code> &lt;file-id&gt; &lt;side&gt; &lt;speaker&gt; &lt;start-time&gt; &lt;end-time&gt;</code></pre>
+<p>where <code>&lt;side&gt;</code> is A or B for channel 1 and 2 respectively.</p></li>
+<li><p>Use the PEM file to create <code>segments</code> and <code>utt2spk</code> file. The format of the <code>segments</code> file is:</p>
+<pre><code> &lt;utterance-id&gt; &lt;file-id&gt;-&lt;A|B&gt; &lt;start-time&gt; &lt;end-time&gt;</code></pre>
+<p>The format of the <code>utt2spk</code> file is:</p>
+<pre><code> &lt;utterance-id&gt; &lt;speaker-id&gt;</code></pre>
+For this task, each side of conversation has only one speaker. So an appropriate <code>&lt;speaker-id&gt;</code> is <code>&lt;file-id&gt;-&lt;A|B&gt;</code>.<br />
+Note that the <code>&lt;utterance-id&gt;</code> has to be unique and must contain the <code>&lt;speaker-id&gt;</code> as the prefix for correct sorting. Examples are adding the timing information or the count as suffix:
+<ul>
+<li><code>&lt;speaker-id&gt;-&lt;start-time*100&gt;-&lt;end-time*100&gt;</code></li>
+<li><code>&lt;speaker-id&gt;-&lt;001|002|...&gt;</code></li>
+</ul></li>
+<li><p>The transcriptions in <code>/export/corpora2/LDC/LDC2002T43</code>. We will use modified versions of these for scoring</p>
+<pre><code> cp /export/a16/vmanoha1/jhu_tutorial/{stm,glm} data/eval2000</code></pre></li>
+<li><p>The scoring script <code>score_sclite.sh</code> will be used for scoring the decoded directory:</p>
+<pre><code> cp /export/a16/vmanoha1/jhu_tutorial/score_sclite.sh local/</code></pre></li>
+</ol>
+<h2 id="prepare-decoding-graph">Prepare decoding graph</h2>
+<pre><code>utils/mkgraph.sh --self-loop-scale 1.0 data/lang_pp_test \
+  exp/chain/tdnn_7b exp/chain/tdnn_7b/graph_pp</code></pre>
+<h2 id="prepare-mfcc-and-i-vectors">Prepare MFCC and i-vectors</h2>
+<pre><code>utils/copy_data_dir.sh data/eval2000 data/eval2000_hires
+steps/make_mfcc.sh --mfcc-config conf/mfcc_hires.conf --nj 30 data/eval2000_hires
+steps/compute_cmvn_stats.sh data/eval2000_hires
+utils/fix_data_dir.sh data/eval2000_hires
+
+steps/online/nnet2/extract_ivectors.sh --nj 30 --cmd &quot;queue.pl --mem 2G&quot; \
+  data/eval2000_hires data/lang_pp_test exp/nnet3/extractor exp/nnet3/ivectors_eval2000</code></pre>
+<h2 id="decoding-and-scoring">Decoding and scoring</h2>
+<pre><code>steps/nnet3/decode.sh --nj 30 --cmd &#39;queue.pl --mem 4G&#39; --config conf/decode.config \
+  --acwt 1.0 --post-decode-acwt 10.0 \
+  --frames-per-chunk 50 --skip-scoring true \
+  --online-ivector-dir exp/nnet3/ivectors_eval2000 \
+  exp/chain/tdnn_7b/graph_pp data/eval2000_hires \
+  exp/chain/tdnn_7b/decode_eval2000_pp_tg
+
+local/score_sclite.sh --cmd queue.pl --min-lmwt 8 --max-lmwt 12 \
+  data/eval2000_hires exp/chain/tdnn_7b/graph_pp exp/chain/tdnn_7b/decode_eval2000_pp_tg
+
+grep Sum exp/chain/tdnn_7b/decode_eval2000_pp_tg/scor*/*.sys | utils/best_wer.sh
+# %WER 10.7 | 1831 21395 | 90.7 6.4 2.9 1.4 10.7 47.8 | exp/chain/tdnn_7b/decode_eval2000_pp_tg/score_9_0.0/eval2000_hires.ctm.swbd.filt.sys</code></pre>

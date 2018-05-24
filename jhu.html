@@ -101,8 +101,8 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 				You will have to do some modifications:
 				<pre class="kaldiStyle tutorialStyle">
 				$ sed -i'' 's/run.pl/queue.pl/g' cmd.sh
-				$ ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
-				$ ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				$ ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/iban.tar.gz .
+				$ ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/corpus .
 				</pre>
 				Be sure you are not storing data nor running the recipe from your home directory -- use one of the <samp>/export/&lt;something&gt;</samp> directories to run the recipe (in the same way as you run -- or should run -- the kaldi recipes on the CLSP grid).
 				
@@ -117,13 +117,13 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 				<pre class="kaldiStyle tutorialStyle">
 				mkdir -p /export/&lt;your-machine&gt;/&lt;your-username&gt;/iban
 				cd /export/&lt;your-machine&gt;/&lt;your-username&gt;/iban
-				cp -R /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/{conf,local,path.sh,cmd.sh,run.sh}  .
-				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/{steps,utils} .
-				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
-				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				cp -R /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/{conf,local,path.sh,cmd.sh,run.sh}  .
+				ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/{steps,utils} .
+				ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/iban.tar.gz .
+				ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/corpus .
 				
 				sed -i'' 's/run.pl/queue.pl/g' cmd.sh
-				sed -i'' 's:KALDI_ROOT=.*:KALDI_ROOT=/export/a09/jtrmal/kaldi-clean-git/:g' path.sh
+				sed -i'' 's:KALDI_ROOT=.*:KALDI_ROOT=/export/a16/vmanoha1/kaldi-iban/:g' path.sh
 				</pre>
 				If you hesitate, if you don't know something, if you have doubts, just ask us! Do not guess!
 				</p>
@@ -142,7 +142,7 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 
                                 cd iban/tools
                                 make -j 16
-                                ln -s /export/a09/jtrmal/kaldi-clean-git/tools/srilm
+                                ln -s /export/a16/vmanoha1/kaldi-iban/tools/srilm
                                 source env.sh
 
                                 cd ../src
@@ -151,8 +151,8 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
                                 make -j 16
 
                                 cd ../egs/iban/s5
-				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/iban.tar.gz .
-				ln -s /export/a09/jtrmal/kaldi-clean-git/egs/iban/s5/corpus .
+				ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/iban.tar.gz .
+				ln -s /export/a16/vmanoha1/kaldi-iban/egs/iban/s5/corpus .
 				</pre>
 				</p>
 
@@ -167,12 +167,17 @@ ubuntu@ip-10-37-174-80:~$ screen -rd 2101.pts-0.ip-10-37-174-80
 
 				It will take a two or three hours to finish.
 				After the script finishes, you can run another script, providing training procedure for TDNN acoustic models. 
-				That script is <samp>./local/nnet3/run_tdnn.sh</samp>. It is inteded to be run from the same directory in which 
+				That script is <samp>./local/chain/run_tdnn.sh</samp>. It is inteded to be run from the same directory in which 
 				the script <samp>run.sh</samp> lies, i.e. should be executed as
 				
 				<pre class="kaldiStyle tutorialStyle">
-				~/kaldi/egs/iban/s5 $ ./local/nnet3/run_tdnn.sh 2>&1 | tee run-tdnn.log
+				~/kaldi/egs/iban/s5 $ ./local/chain/run_tdnn.sh 2>&1 | tee run-tdnn.log
 				</pre>
+
+				<h4 class="kaldiStyle tutorialStyle">Homework: decoding your own data</h4>
+				<p>
+				<a href="/aspire_instructions.html" target="_blank">Prepare your own data for decoding, using a pretrained acoustic model.</a>
+				</p>
 
 
 
