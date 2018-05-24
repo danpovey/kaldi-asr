@@ -1,4 +1,7 @@
+<h2 id="preparing-your-own-data-for-decoding-using-a-pre-trained-acoustic-model">Preparing your own data for decoding using a pre-trained acoustic model</h2>
+<p>This page will show you how to prepare your own data for decoding using a pre-trained kaldi acoustic model. Here, we will use a TDNN chain model trained on the Fisher corpus. As an example, we will prepare the <code>eval2000</code> dataset from scratch. This is to simulate the real world scenario where the data is not already in a format required by kaldi.</p>
 <h2 id="download-the-pre-trained-kaldi-tdnn-chain-model">Download the pre-trained kaldi TDNN chain model</h2>
+<p>Download the TDNN model into kaldi aspire recipe (<strong>Not the IBAN</strong>) directory.</p>
 <pre><code>cd egs/aspire/s5
 wget http://kaldi-asr.org/models/1/0001_aspire_chain_model.tar.gz
 tar xzvf 0001_aspire_chain_model.tar.gz</code></pre>
@@ -10,7 +13,7 @@ data/lang_pp_test     # 3-gram LM lang directory</code></pre>
 <p>Create a new data directory <code>data/eval2000</code> with the following files: <code>wav.scp, reco2file_and_channel, segments, utt2spk, spk2utt</code>. The instructions are as follows:</p>
 <ol type="1">
 <li><p>The audio files are in NIST sphere format (<code>*.sph</code>) files in <code>/export/corpora2/LDC/LDC2002S09/hub5e_00/english</code><br />
-The two sides of the conversation are in separate channels and can be extracted on the fly by adding the following lines in <code>wav.scp</code>:</p>
+The two sides of the conversation are in separate channels and can be extracted on the fly by adding the following lines in <code>wav.scp</code>, one for each channel in every file:</p>
 <pre><code> &lt;file-id&gt;-A sph2pipe -f wav -p -c 1 &lt;filename&gt; |
  &lt;file-id&gt;-B sph2pipe -f wav -p -c 2 &lt;filename&gt; |</code></pre>
 <p>where <code>&lt;file-id&gt;</code> is an arbitrary unique id for the file (usually the basename)</p>
@@ -26,7 +29,7 @@ The two sides of the conversation are in separate channels and can be extracted 
 <p>The format of the <code>utt2spk</code> file is:</p>
 <pre><code> &lt;utterance-id&gt; &lt;speaker-id&gt;</code></pre>
 For this task, each side of conversation has only one speaker. So an appropriate <code>&lt;speaker-id&gt;</code> is <code>&lt;file-id&gt;-&lt;A|B&gt;</code>.<br />
-Note that the <code>&lt;utterance-id&gt;</code> has to be unique and must contain the <code>&lt;speaker-id&gt;</code> as the prefix for correct sorting. Examples are adding the timing information or the count as suffix:
+Note that the <code>&lt;utterance-id&gt;</code> has to be unique and must contain the <code>&lt;speaker-id&gt;</code> as the prefix for correct sorting. This is typically done by adding the timing information or the segment count as suffix:
 <ul>
 <li><code>&lt;speaker-id&gt;-&lt;start-time*100&gt;-&lt;end-time*100&gt;</code></li>
 <li><code>&lt;speaker-id&gt;-&lt;001|002|...&gt;</code></li>
